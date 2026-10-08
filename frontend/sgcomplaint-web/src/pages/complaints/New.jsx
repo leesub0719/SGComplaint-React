@@ -105,7 +105,7 @@ export default function ComplaintNew() {
           </div>
 
           <form onSubmit={submit} noValidate>
-            <div className="row">
+            <div className="category-password-row">
               <div className="form-field">
                 <label htmlFor="complaint-category">분류 <em>*</em></label>
                 <select
@@ -188,7 +188,7 @@ export default function ComplaintNew() {
             {formMessage && <p className="form-message" aria-live="polite">{formMessage}</p>}
 
             <div className="form-actions">
-              <Link className="button button-cancel" to="/complaints">취소</Link>
+              <Link className="button button-cancel" to="/">취소</Link>
               <button className="button button-submit" type="submit" disabled={submitting}>
                 {submitting ? '접수 중...' : '접수하기'}
               </button>

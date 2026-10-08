@@ -157,7 +157,7 @@ public class ComplaintService {
                 && passwordEncoder.matches(password, complaint.getPassword());
     }
 
-    public PublicComplaintDetail getPublicComplaint(Long complaintNo) {
+    public PublicComplaintDetail getPublicComplaint(Long complaintNo, String loginId) {
         Complaint complaint = getRequiredComplaint(complaintNo);
         ComplaintAnswer answer = answerRepository.findByComplaintNo(complaintNo).orElse(null);
         List<ComplaintFileItem> answerFiles = answer == null
@@ -196,7 +196,8 @@ public class ComplaintService {
                 answer == null ? "" : answer.getAdminName(),
                 answer == null ? "" : answer.getUpdatedAt().format(DATE_TIME_FORMATTER),
                 answerFiles,
-                files
+                files,
+                canEditPublicComplaint(loginId, complaintNo)
         );
     }
 

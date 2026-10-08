@@ -7,18 +7,18 @@ export default function ComplaintRow({ item, onOpen }) {
     <tr>
       <td>{item.complaintNo}</td>
       <td>
-        <span className={`badge category-${item.categoryCode.toLowerCase()}`}>
+        <span className={`category-label category-${item.categoryCode.toLowerCase()}`}>
           {item.categoryLabel}
         </span>
       </td>
       <td>
-        <span className={`badge status-${item.statusCode.toLowerCase()}`}>
+        <span className={`complaint-status status-${item.statusCode.toLowerCase()}`}>
           {item.statusLabel}
         </span>
       </td>
-      <td className="title">
-        <button type="button" className="complaint-title-button" onClick={() => onOpen(item)}>
-          🔒 {item.title}
+      <td className="title-cell">
+        <button type="button" onClick={() => onOpen(item)}>
+          {item.passwordProtected && <span className="lock-icon">🔒</span>} <span>{item.title}</span>
         </button>
       </td>
       <td>{item.maskedWriterName}</td>

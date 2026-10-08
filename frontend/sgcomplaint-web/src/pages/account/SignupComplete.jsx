@@ -3,19 +3,11 @@
  */
 export default function SignupComplete({ empNo }) {
   return (
-    <section className="card complete-card">
-      <div className="card-title">
-        <p>STEP 3</p>
-        <h1>회원가입이 완료되었습니다</h1>
-        <span>이제 로그인하고 민원 접수와 처리 현황 확인을 이용하실 수 있습니다.</span>
-      </div>
-
-      {empNo != null && <p className="complete-no">회원번호 <strong>{empNo}</strong></p>}
-
-      <div className="actions">
-        <a className="secondary" href="/">홈으로</a>
-        <a className="primary" href="/login">로그인하기</a>
-      </div>
-    </section>
+    <main className="signup-complete-page">
+      <div className="signup-complete-icon" aria-hidden="true">✓</div>
+      <h1>회원가입이 완료되었습니다.</h1>
+      <p>{empNo != null && <>회원번호 <strong>{empNo}</strong>번으로 가입되었습니다.<br /></>}이제 로그인 후 서비스를 이용할 수 있습니다.</p>
+      <a href="/app/login">로그인하기</a>
+    </main>
   );
 }

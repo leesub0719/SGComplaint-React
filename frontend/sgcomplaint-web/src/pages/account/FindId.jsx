@@ -74,26 +74,26 @@ export default function FindId() {
   }
 
   return (
-    <section className="card">
-      <div className="card-title">
-        <p>ACCOUNT</p>
+    <main className="recovery-page recovery-page-wide"><section className="recovery-card">
+      <div className="recovery-heading">
+        <span className="eyebrow">ACCOUNT RECOVERY</span>
         <h1>아이디 찾기</h1>
         <span>가입 시 등록한 휴대전화 번호로 본인 확인 후 아이디를 알려드립니다.</span>
       </div>
 
-      <ol className="steps">
+      <ol className="step-indicator">
         {STEPS.map((label, index) => {
           const stepNumber = index + 1;
           const className = stepNumber === step ? 'is-current'
             : (stepNumber < step ? 'is-complete' : '');
-          return <li key={label} className={className}>{stepNumber}. {label}</li>;
+          return <li key={label} className={className}><span>{stepNumber}</span>{label}</li>;
         })}
       </ol>
 
       {step === 1 && (
-        <div className="field">
+        <section className="recovery-step is-active"><div className="field">
           <label htmlFor="find-phone">휴대전화 번호</label>
-          <div className="inline">
+          <div>
             <input
               id="find-phone"
               type="tel"
@@ -107,7 +107,7 @@ export default function FindId() {
               }}
               autoFocus
             />
-            <button type="button" onClick={() => requestCode(false)} disabled={busy}>
+            <button className="primary-button" type="button" onClick={() => requestCode(false)} disabled={busy}>
               인증번호 받기
             </button>
           </div>
@@ -116,14 +116,13 @@ export default function FindId() {
               {phoneMessage.text}
             </p>
           )}
-        </div>
+        </div></section>
       )}
 
       {step === 2 && (
-        <div className="field">
-          <p className="summary">{formatPhone(normalizePhone(phone))} 으로 인증번호를 보냈습니다.</p>
+        <section className="recovery-step is-active"><div className="summary-box"><span>인증번호 전송 번호</span><strong>{formatPhone(normalizePhone(phone))}</strong></div><div className="field">
           <label htmlFor="find-code">인증번호</label>
-          <div className="inline">
+          <div>
             <div className="code-wrap">
               <input
                 id="find-code"
@@ -140,31 +139,29 @@ export default function FindId() {
               />
               <span className="timer">{formatTimer(timer.remaining)}</span>
             </div>
-            <button type="button" onClick={verifyCode} disabled={busy}>확인</button>
+            <button className="primary-button" type="button" onClick={verifyCode} disabled={busy}>인증하고 아이디 찾기</button>
           </div>
           {codeMessage.text && (
             <p className={codeMessage.ok ? 'field-message success' : 'field-error'}>
               {codeMessage.text}
             </p>
           )}
-          <button className="link-button" type="button" onClick={() => requestCode(true)} disabled={busy}>
+          <button className="text-button" type="button" onClick={() => requestCode(true)} disabled={busy}>
             인증번호 다시 받기
           </button>
-        </div>
+        </div></section>
       )}
 
       {step === 3 && (
-        <div className="result">
+        <section className="recovery-step is-active result-step"><div className="success-icon">✓</div><h2>아이디를 찾았습니다</h2>
           <p>회원님의 아이디입니다.</p>
-          <div className="found-list">
+          <div className="found-id-list">
             {foundIds.map((employeeId) => <div key={employeeId}>{employeeId}</div>)}
           </div>
-          <div className="actions">
-            <a className="secondary" href="/app/account/reset-password">비밀번호 재설정</a>
-            <a className="primary" href="/login">로그인하기</a>
-          </div>
-        </div>
+          <a className="primary-button button-link" href="/app/login">로그인하기</a>
+          <a className="text-button button-link" href="/app/account/reset-password">비밀번호도 찾기</a>
+        </section>
       )}
-    </section>
+    </section></main>
   );
 }

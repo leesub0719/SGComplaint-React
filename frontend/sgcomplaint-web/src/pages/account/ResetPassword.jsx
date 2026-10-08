@@ -140,19 +140,19 @@ export default function ResetPassword() {
   );
 
   return (
-    <section className="card">
-      <div className="card-title">
+    <main className="recovery-page recovery-page-wide"><section className="recovery-card">
+      <div className="recovery-heading">
         <p>ACCOUNT</p>
         <h1>비밀번호 재설정</h1>
         <span>본인 확인 후 새 비밀번호를 설정할 수 있습니다.</span>
       </div>
 
-      <ol className="steps">
+      <ol className="step-indicator password-steps">
         {STEPS.map((label, index) => {
           const stepNumber = index + 1;
           const className = stepNumber === step ? 'is-current'
             : (stepNumber < step ? 'is-complete' : '');
-          return <li key={label} className={className}>{stepNumber}. {label}</li>;
+          return <li key={label} className={className}><span>{stepNumber}</span>{label}</li>;
         })}
       </ol>
 
@@ -285,6 +285,6 @@ export default function ResetPassword() {
           </div>
         </div>
       )}
-    </section>
+    </section></main>
   );
 }

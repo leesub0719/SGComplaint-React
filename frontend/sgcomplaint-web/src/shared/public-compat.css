@@ -1,0 +1,68 @@
+/* React 동작 요소를 기존 Thymeleaf 사용자 화면 규격에 맞추는 보정층. */
+.mypage-content { min-width: 0; }
+
+.notice-page .pagination button {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: #7b8581;
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.notice-page .pagination button:hover { color: var(--green); background: var(--green-pale); }
+.notice-page .pagination button.active { color: #fff; background: var(--green); font-weight: 850; }
+.notice-page .pagination button.disabled { opacity: .35; pointer-events: none; }
+
+.inquiry-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 14px; }
+.inquiry-actions button { padding: 9px 16px; border: 1px solid #cbd5d1; border-radius: 7px; background: #fff; font-weight: 750; cursor: pointer; }
+.inquiry-actions button.primary { color: #fff; background: #08745f; border-color: #08745f; }
+.inquiry-actions button.danger { color: #a83024; border-color: #d8a6a0; }
+.inquiry-locked-message { margin: 0; color: #78807c; font-size: 12px; text-align: right; }
+.inquiry-edit-form { display: grid; gap: 13px; }
+.inquiry-edit-form label { display: grid; gap: 7px; font-size: 13px; font-weight: 800; }
+.inquiry-edit-form input, .inquiry-edit-form select { width: 100%; min-height: 45px; padding: 0 12px; border: 1px solid #ccd6d2; border-radius: 8px; }
+
+.mypage-profile-form .field-inline { margin-top: 8px; }
+.mypage-profile-form .field-inline > button { min-height: 40px; padding: 0 13px; color: #66540b; background: #fff; border: 1px solid #b99b19; border-radius: 8px; font-weight: 800; cursor: pointer; }
+.mypage-profile-form .verification { margin-top: 12px; padding: 15px; background: #fffcf1; border: 1px solid #eee1a8; border-radius: 10px; }
+.mypage-profile-form .verification.is-verified { background: #eff8f5; border-color: #8fc5b8; }
+.mypage-profile-form .verification .field-inline { display: grid; grid-template-columns: minmax(0, 1fr) 110px; gap: 8px; }
+.mypage-profile-form .code-wrap { position: relative; }
+.mypage-profile-form .code-wrap .timer { position: absolute; top: 50%; right: 12px; transform: translateY(-50%); color: #bb3f35; font-size: 12px; }
+
+.signup-page .login-guide { display: block; margin: 11px 0; color: #6d7673; text-align: center; }
+
+.signup-complete-page {
+  width: min(480px, calc(100% - 40px));
+  margin: 70px auto;
+  padding: 48px;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #dbe4e1;
+  border-radius: 18px;
+  box-shadow: 0 16px 40px rgba(30,73,62,.09);
+}
+.signup-complete-icon { width: 72px; height: 72px; display: grid; place-items: center; margin: 0 auto 20px; color: #fff; background: #08745f; border-radius: 50%; font-size: 36px; }
+.signup-complete-page h1 { margin: 0; font-size: 28px; }
+.signup-complete-page p { margin: 13px 0 28px; color: #6d7673; line-height: 1.7; }
+.signup-complete-page > a { min-width: 180px; height: 50px; display: inline-flex; align-items: center; justify-content: center; color: #fff; background: #08745f; border-radius: 9px; font-weight: 700; }
+
+.recovery-page .inline { display: grid; grid-template-columns: minmax(0, 1fr) 128px; gap: 10px; }
+.recovery-page .inline > button { color: #fff; background: #08745f; border: 0; border-radius: 9px; font-weight: 800; cursor: pointer; }
+.recovery-page .actions { display: flex; justify-content: center; gap: 9px; margin-top: 20px; }
+.recovery-page .actions a { min-height: 46px; display: inline-flex; align-items: center; padding: 0 17px; border-radius: 8px; font-size: 13px; font-weight: 800; }
+.recovery-page .actions .primary { color: #fff; background: #08745f; }
+.recovery-page .actions .secondary { color: #08745f; border: 1px solid #08745f; }
+.recovery-page .field-error { min-height: 17px; margin: 5px 2px 0; color: #b6372e; font-size: 11px; }
+.recovery-page .summary { padding: 12px 14px; background: #f4f8f7; border-radius: 8px; color: #52605b; }
+.recovery-page .result { text-align: center; }
+
+@media (max-width: 620px) {
+  .signup-complete-page { margin: 34px auto; padding: 34px 22px; }
+  .recovery-page .inline { grid-template-columns: 1fr; }
+}

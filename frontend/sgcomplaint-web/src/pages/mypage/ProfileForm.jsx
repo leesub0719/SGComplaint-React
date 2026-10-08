@@ -111,9 +111,9 @@ export default function ProfileForm({ profile, onExpired }) {
   }
 
   const passwordField = (name, label, placeholder) => (
-    <div className="field">
+    <div className="mypage-field">
       <label htmlFor={name}>{label} <em>선택</em></label>
-      <div className="password-wrap">
+      <div className="mypage-password-wrap">
         <input
           id={name}
           type={showPassword[name] ? 'text' : 'password'}
@@ -129,28 +129,28 @@ export default function ProfileForm({ profile, onExpired }) {
           {showPassword[name] ? '숨김' : '보기'}
         </button>
       </div>
-      {fieldErrors[name] && <p className="field-error">{fieldErrors[name]}</p>}
+      {fieldErrors[name] && <p className="mypage-field-error">{fieldErrors[name]}</p>}
     </div>
   );
 
   return (
-    <section className="panel">
-      <div className="panel-heading">
+    <section className="mypage-content-panel">
+      <div className="mypage-heading">
         <span>MEMBER INFORMATION</span>
         <h1>정보수정</h1>
         <p>가입정보를 확인하고 필요한 항목을 변경할 수 있습니다.</p>
       </div>
 
-      {alert && <p className={`alert ${alert.type}`}>{alert.message}</p>}
+      {alert && <p className={`mypage-alert ${alert.type}`}>{alert.message}</p>}
 
-      <form className="profile-form" onSubmit={submit} noValidate>
-        <div className="field">
+      <form className="mypage-profile-form" onSubmit={submit} noValidate>
+        <div className="mypage-field">
           <label htmlFor="profile-id">아이디</label>
           <input id="profile-id" type="text" value={profile.empId ?? ''} readOnly />
           <small>아이디는 변경할 수 없습니다.</small>
         </div>
 
-        <div className="field">
+        <div className="mypage-field">
           <label htmlFor="profile-name">이름</label>
           <input id="profile-name" type="text" value={profile.empName ?? ''} readOnly />
           <small>이름은 변경할 수 없습니다.</small>
@@ -159,7 +159,7 @@ export default function ProfileForm({ profile, onExpired }) {
         {passwordField('newPassword', '새 비밀번호', '변경할 때만 영문·숫자 포함 8자 이상 입력')}
         {passwordField('newPasswordConfirm', '새 비밀번호 확인', '새 비밀번호를 다시 입력해 주세요')}
 
-        <div className="field">
+        <div className="mypage-field">
           <label htmlFor="profile-email">이메일 <em className="required">필수</em></label>
           <input
             id="profile-email"
@@ -170,10 +170,10 @@ export default function ProfileForm({ profile, onExpired }) {
             onChange={(event) => update('empEmail', event.target.value)}
             required
           />
-          {fieldErrors.empEmail && <p className="field-error">{fieldErrors.empEmail}</p>}
+          {fieldErrors.empEmail && <p className="mypage-field-error">{fieldErrors.empEmail}</p>}
         </div>
 
-        <div className="field">
+        <div className="mypage-field">
           <label htmlFor="profile-phone">연락처 <em className="required">필수</em></label>
           <input
             id="profile-phone"
@@ -184,7 +184,7 @@ export default function ProfileForm({ profile, onExpired }) {
             onChange={(event) => update('empPhone', digitsOnly(event.target.value).slice(0, 11))}
             required
           />
-          {fieldErrors.empPhone && <p className="field-error">{fieldErrors.empPhone}</p>}
+          {fieldErrors.empPhone && <p className="mypage-field-error">{fieldErrors.empPhone}</p>}
           <PhoneVerification
             phone={form.empPhone}
             originalPhone={originalPhone}
@@ -194,9 +194,9 @@ export default function ProfileForm({ profile, onExpired }) {
           />
         </div>
 
-        <fieldset className="address-fieldset">
+        <fieldset className="mypage-address-fieldset">
           <legend>주소 <em>선택</em></legend>
-          <div className="field-inline">
+          <div className="mypage-input-action">
             <input
               id="profile-postcode"
               type="text"
@@ -222,18 +222,18 @@ export default function ProfileForm({ profile, onExpired }) {
             value={form.addressDetail}
             onChange={(event) => update('addressDetail', event.target.value)}
           />
-          {fieldErrors.addressDetail && <p className="field-error">{fieldErrors.addressDetail}</p>}
+          {fieldErrors.addressDetail && <p className="mypage-field-error">{fieldErrors.addressDetail}</p>}
         </fieldset>
 
-        <div className="form-actions">
-          <button className="primary" type="submit" disabled={saving}>
+        <div className="mypage-form-actions profile-actions">
+          <button className="mypage-primary-button" type="submit" disabled={saving}>
             {saving ? '저장 중…' : '저장'}
           </button>
-          <a className="secondary" href="/">취소</a>
+          <a className="mypage-secondary-button" href="/app/">취소</a>
         </div>
       </form>
 
-      <div className="withdraw-area">
+      <div className="mypage-withdraw-area">
         <div>
           <strong>회원탈퇴</strong>
           <span>탈퇴 후에는 로그인할 수 없으며 기존 문의 기록은 보존됩니다.</span>

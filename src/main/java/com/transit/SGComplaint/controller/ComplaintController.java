@@ -50,9 +50,11 @@ public class ComplaintController {
     }
 
     @GetMapping("/view/{complaintNo}")
-    public PublicComplaintDetail detail(@PathVariable Long complaintNo, HttpSession session) {
+    public PublicComplaintDetail detail(@PathVariable Long complaintNo, HttpSession session,
+            Authentication authentication) {
         requireVerified(session, complaintNo);
-        return complaintService.getPublicComplaint(complaintNo);
+        return complaintService.getPublicComplaint(complaintNo,
+                authentication == null ? null : authentication.getName());
     }
 
     @PostMapping

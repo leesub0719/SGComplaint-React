@@ -30,6 +30,7 @@ export default function MyInquiries() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState(null);
+  const [member, setMember] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -39,7 +40,12 @@ export default function MyInquiries() {
         endDate,
         page: String(pageNumber),
       });
-      setPage(await apiGet(`/api/mypage/inquiries?${query}`));
+      const [inquiryPage, profile] = await Promise.all([
+        apiGet(`/api/mypage/inquiries?${query}`),
+        apiGet('/api/mypage/profile'),
+      ]);
+      setPage(inquiryPage);
+      setMember(profile);
     } catch (exception) {
       setMessage({ type: 'error', text: exception.message });
     } finally {
@@ -114,23 +120,30 @@ export default function MyInquiries() {
   const items = page?.content ?? [];
 
   return (
-    <main className="page mypage-shell">
-      <aside className="side-menu">
-        <strong>마이페이지</strong>
+    <main id="mypage-content" className="mypage-page">
+      <div className="mypage-shell">
+      <aside className="mypage-sidebar" aria-label="마이페이지 메뉴">
+        <div className="mypage-member-summary">
+          <span>MY PAGE</span>
+          <strong>{member?.empName || '회원'}</strong>
+          <small>{member?.empId || ''}</small>
+        </div>
+        <nav>
         <Link to="/mypage">정보수정</Link>
-        <Link className="active" to="/mypage/inquiries">나의 문의내역</Link>
+        <Link className="active" to="/mypage/inquiries">문의내역</Link>
+        </nav>
       </aside>
 
-      <section className="mypage-content panel inquiry-panel">
-        <div className="panel-heading">
+      <section className="mypage-content-panel" aria-labelledby="inquiries-title">
+        <div className="mypage-heading">
           <span>MY INQUIRIES</span>
           <h1>문의내역</h1>
           <p>내가 등록한 문의를 확인하고, 처리 전 문의는 수정하거나 삭제할 수 있습니다.</p>
         </div>
 
-        {message && <p className={`alert ${message.type}`}>{message.text}</p>}
+        {message && <p className={`mypage-alert ${message.type}`}>{message.text}</p>}
 
-        <form className="inquiry-search-form" onSubmit={search}>
+        <form className="inquiry-period-form" onSubmit={search}>
           <label htmlFor="my-inquiry-start">조회기간</label>
           <input
             id="my-inquiry-start"
@@ -148,39 +161,34 @@ export default function MyInquiries() {
           <button type="submit">조회</button>
         </form>
 
-        <div className="inquiry-summary-row">
-          <span>총 <strong>{page?.totalElements ?? 0}</strong>건</span>
-          <Link className="inquiry-new-link" to="/complaints/new">새 문의 작성</Link>
+        <div className="inquiry-summary">
+          <span>총 <strong>{page?.totalElements ?? 0}</strong>건의 문의가 있습니다.</span>
+          <Link to="/complaints/new">새 문의 작성</Link>
         </div>
 
         {loading && <p className="message">문의내역을 불러오는 중입니다.</p>}
 
         {!loading && items.length === 0 && (
-          <p className="message">조회된 문의내역이 없습니다.</p>
+          <div className="inquiry-empty"><strong>조회된 문의내역이 없습니다.</strong><span>조회기간을 변경하거나 새로운 문의를 작성해 주세요.</span></div>
         )}
 
-        {!loading && items.map((item) => {
+        {!loading && items.length > 0 && <div className="inquiry-list">{items.map((item) => {
           const opened = openNo === item.complaintNo;
           const editing = editingNo === item.complaintNo;
           return (
-            <article className="my-inquiry-item" key={item.complaintNo}>
-              <button
-                className="my-inquiry-summary"
-                type="button"
-                aria-expanded={opened}
-                onClick={() => {
-                  if (editing) return;
-                  setOpenNo(opened ? null : item.complaintNo);
-                }}
-              >
-                <span>#{item.complaintNo}</span>
+            <details className="inquiry-item" key={item.complaintNo} open={opened} onToggle={(event) => {
+              if (editing) return;
+              setOpenNo(event.currentTarget.open ? item.complaintNo : null);
+            }}>
+              <summary>
+                <span className="inquiry-number">#{item.complaintNo}</span>
                 <strong>{item.title}</strong>
-                <em className={`badge ${item.statusCssClass}`}>{item.statusLabel}</em>
+                <span className={`inquiry-status ${item.statusCssClass}`}>{item.statusLabel}</span>
                 <time>{item.registeredDate}</time>
-              </button>
+              </summary>
 
               {opened && (
-                <div className="my-inquiry-detail">
+                <div className="inquiry-detail">
                   {editing ? (
                     <div className="inquiry-edit-form">
                       <label>
@@ -225,14 +233,14 @@ export default function MyInquiries() {
                         <h2>문의 내용</h2>
                         <div dangerouslySetInnerHTML={{ __html: item.content }} />
                       </section>
-                      <section className="inquiry-answer-box">
+                      <section className="inquiry-answer">
                         <h2>답변</h2>
                         <p>{item.answerContent || '담당자가 문의 내용을 확인하고 있습니다.'}</p>
-                        {(item.answerAttachments ?? []).map((file) => (
+                        <div className="inquiry-attachments">{(item.answerAttachments ?? []).map((file) => (
                           <a key={file.downloadUrl} href={file.downloadUrl}>
                             {file.originalName} ({file.formattedSize})
                           </a>
-                        ))}
+                        ))}</div>
                       </section>
                       {item.editable && (
                         <div className="inquiry-actions">
@@ -253,30 +261,21 @@ export default function MyInquiries() {
                   )}
                 </div>
               )}
-            </article>
+            </details>
           );
-        })}
+        })}</div>}
 
         {page && page.totalPages > 1 && (
-          <nav className="pagination" aria-label="문의내역 페이지">
-            <button
-              type="button"
-              disabled={page.first}
-              onClick={() => setPageNumber((number) => Math.max(0, number - 1))}
-            >
-              이전
-            </button>
-            <span>{page.number + 1} / {page.totalPages}</span>
-            <button
-              type="button"
-              disabled={page.last}
-              onClick={() => setPageNumber((number) => number + 1)}
-            >
-              다음
-            </button>
+          <nav className="inquiry-pagination" aria-label="문의내역 페이지">
+            {!page.first && <a href="#previous" onClick={(event) => { event.preventDefault(); setPageNumber((number) => Math.max(0, number - 1)); }}>이전</a>}
+            {Array.from({ length: page.totalPages }, (_, index) => index)
+              .filter((index) => index >= page.number - 2 && index <= page.number + 2)
+              .map((index) => <a key={index} className={index === page.number ? 'active' : ''} href={`#page-${index + 1}`} onClick={(event) => { event.preventDefault(); setPageNumber(index); }}>{index + 1}</a>)}
+            {!page.last && <a href="#next" onClick={(event) => { event.preventDefault(); setPageNumber((number) => number + 1); }}>다음</a>}
           </nav>
         )}
       </section>
+      </div>
     </main>
   );
 }

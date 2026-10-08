@@ -40,15 +40,15 @@ export default function SignupTerms({ onAgreed }) {
   }
 
   return (
-    <section className="card">
-      <div className="card-title">
+    <main className="agreement-page"><section className="agreement-card">
+      <div className="agreement-title-area">
         <p>STEP 1</p>
         <h1>약관 및 개인정보 동의</h1>
         <span>회원가입을 계속하려면 필수 내용을 확인하고 동의해 주세요.</span>
       </div>
 
       <form onSubmit={submit}>
-        <label className="agree-all">
+        <label className="all-agreement">
           <input
             type="checkbox"
             checked={allChecked}
@@ -60,8 +60,8 @@ export default function SignupTerms({ onAgreed }) {
         </label>
 
         {REQUIRED_AGREEMENTS.map((item) => (
-          <section className="agree-section" key={item.name}>
-            <label className="agree-check">
+          <section className="agreement-section" key={item.name}>
+            <label className="agreement-check">
               <input
                 type="checkbox"
                 checked={checked[item.name]}
@@ -74,7 +74,7 @@ export default function SignupTerms({ onAgreed }) {
             </label>
 
             {item.articles && (
-              <div className="agree-content" tabIndex={0}>
+              <div className="agreement-content" tabIndex={0}>
                 {item.articles.map((article) => (
                   <div key={article.heading}>
                     <h2>{article.heading}</h2>
@@ -86,15 +86,15 @@ export default function SignupTerms({ onAgreed }) {
           </section>
         ))}
 
-        {error && <p className="field-error">{error}</p>}
+        {error && <p className="agreement-error">{error}</p>}
 
-        <div className="actions">
-          <a className="secondary" href="/">취소</a>
-          <button className="primary" type="submit" disabled={!allChecked || submitting}>
+        <div className="agreement-actions">
+          <a className="cancel-button" href="/app/">취소</a>
+          <button className="continue-button" type="submit" disabled={!allChecked || submitting}>
             {submitting ? '처리 중…' : '동의하고 계속'}
           </button>
         </div>
       </form>
-    </section>
+    </section></main>
   );
 }

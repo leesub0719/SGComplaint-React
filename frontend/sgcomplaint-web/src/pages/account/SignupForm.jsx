@@ -99,7 +99,7 @@ export default function SignupForm({ onComplete, onAgreementExpired }) {
   const passwordField = (name, label, placeholder) => (
     <div className="field">
       <label htmlFor={name}>{label} <em className="required">필수</em></label>
-      <div className="inline">
+      <div className="password-wrap">
         <input
           id={name}
           type={showPassword[name] ? 'text' : 'password'}
@@ -110,30 +110,30 @@ export default function SignupForm({ onComplete, onAgreementExpired }) {
           required
         />
         <button
-          type="button"
+          className="password-toggle" type="button"
           onClick={() => setShowPassword((previous) => ({ ...previous, [name]: !previous[name] }))}
         >
           {showPassword[name] ? '숨기기' : '보기'}
         </button>
       </div>
-      {fieldErrors[name] && <p className="field-error">{fieldErrors[name]}</p>}
+      {fieldErrors[name] && <p className="field-message">{fieldErrors[name]}</p>}
     </div>
   );
 
   const match = passwordMatchMessage();
 
   return (
-    <section className="card">
-      <div className="card-title">
+    <main className="signup-page"><section className="signup-card">
+      <div className="title-area">
         <p>STEP 2</p>
         <h1>회원정보 입력</h1>
         <span>서비스 이용에 필요한 정보를 입력해 주세요.</span>
       </div>
 
-      <form onSubmit={submit} noValidate>
+      <form className="signup-form" onSubmit={submit} noValidate>
         <div className="field">
           <label htmlFor="emp-id">아이디 <em className="required">필수</em></label>
-          <div className="inline">
+          <div className="input-action-row">
             <input
               id="emp-id"
               type="text"
@@ -142,21 +142,21 @@ export default function SignupForm({ onComplete, onAgreementExpired }) {
               onChange={(event) => updateEmpId(event.target.value)}
               required
             />
-            <button type="button" onClick={checkId} disabled={checkingId}>
+            <button className="field-button" type="button" onClick={checkId} disabled={checkingId}>
               {checkingId ? '확인 중…' : '중복확인'}
             </button>
           </div>
           {idCheck.message && (
-            <p className={idConfirmed ? 'field-message success' : 'field-error'}>{idCheck.message}</p>
+            <p className={idConfirmed ? 'field-message success' : 'field-message'}>{idCheck.message}</p>
           )}
-          {fieldErrors.empId && <p className="field-error">{fieldErrors.empId}</p>}
+          {fieldErrors.empId && <p className="field-message">{fieldErrors.empId}</p>}
         </div>
 
         {passwordField('empPassword', '비밀번호', '영문·숫자 포함 8~72자')}
 
         <div className="field">
           <label htmlFor="passwordConfirm">비밀번호 확인 <em className="required">필수</em></label>
-          <div className="inline">
+          <div className="password-wrap">
             <input
               id="passwordConfirm"
               type={showPassword.passwordConfirm ? 'text' : 'password'}
@@ -167,7 +167,7 @@ export default function SignupForm({ onComplete, onAgreementExpired }) {
               required
             />
             <button
-              type="button"
+              className="password-toggle" type="button"
               onClick={() => setShowPassword((previous) => ({
                 ...previous,
                 passwordConfirm: !previous.passwordConfirm,
@@ -176,8 +176,8 @@ export default function SignupForm({ onComplete, onAgreementExpired }) {
               {showPassword.passwordConfirm ? '숨기기' : '보기'}
             </button>
           </div>
-          {match && <p className={match.ok ? 'field-message success' : 'field-error'}>{match.text}</p>}
-          {fieldErrors.passwordConfirm && <p className="field-error">{fieldErrors.passwordConfirm}</p>}
+          {match && <p className={match.ok ? 'field-message success' : 'field-message'}>{match.text}</p>}
+          {fieldErrors.passwordConfirm && <p className="field-message">{fieldErrors.passwordConfirm}</p>}
         </div>
 
         <div className="field">
@@ -190,7 +190,7 @@ export default function SignupForm({ onComplete, onAgreementExpired }) {
             onChange={(event) => update('empName', event.target.value)}
             required
           />
-          {fieldErrors.empName && <p className="field-error">{fieldErrors.empName}</p>}
+          {fieldErrors.empName && <p className="field-message">{fieldErrors.empName}</p>}
         </div>
 
         <div className="field">
@@ -204,7 +204,7 @@ export default function SignupForm({ onComplete, onAgreementExpired }) {
             onChange={(event) => update('empEmail', event.target.value)}
             required
           />
-          {fieldErrors.empEmail && <p className="field-error">{fieldErrors.empEmail}</p>}
+          {fieldErrors.empEmail && <p className="field-message">{fieldErrors.empEmail}</p>}
         </div>
 
         <div className="field">
@@ -219,18 +219,18 @@ export default function SignupForm({ onComplete, onAgreementExpired }) {
             onChange={(event) => update('empPhone', normalizePhone(event.target.value))}
             required
           />
-          {fieldErrors.empPhone && <p className="field-error">{fieldErrors.empPhone}</p>}
+          {fieldErrors.empPhone && <p className="field-message">{fieldErrors.empPhone}</p>}
         </div>
 
-        {error && <p className="field-error form-error">{error}</p>}
+        {error && <p className="field-message form-error">{error}</p>}
 
-        <div className="actions">
-          <a className="secondary" href="/">취소</a>
-          <button className="primary" type="submit" disabled={submitting}>
+        <div>
+          <a className="login-guide" href="/app/">취소</a>
+          <button className="submit-button" type="submit" disabled={submitting}>
             {submitting ? '가입 중…' : '가입하기'}
           </button>
         </div>
       </form>
-    </section>
+    </section></main>
   );
 }

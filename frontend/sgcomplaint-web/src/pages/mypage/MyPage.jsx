@@ -30,11 +30,11 @@ export default function MyPage() {
   useEffect(() => { load(); }, [load]);
 
   return (
-    <main className="page mypage-shell">
-      <aside className="side-menu">
-        <strong>마이페이지</strong>
+    <main className="mypage-page"><div className="mypage-shell">
+      <aside className="mypage-sidebar">
+        <div className="mypage-member-summary"><span>MY PAGE</span><strong>{profile?.empName || '회원'}</strong><small>{profile?.empId || ''}</small></div><nav>
         <Link className="active" to="/mypage">정보수정</Link>
-        <Link to="/mypage/inquiries">나의 문의내역</Link>
+        <Link to="/mypage/inquiries">문의내역</Link></nav>
       </aside>
 
       <div className="mypage-content">
@@ -45,7 +45,7 @@ export default function MyPage() {
             ? <ProfileForm profile={profile} onExpired={load} />
             : <PasswordConfirm empId={profile.empId} onVerified={load} />
         )}
-      </div>
+      </div></div>
     </main>
   );
 }

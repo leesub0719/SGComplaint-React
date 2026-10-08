@@ -1,17 +1,11 @@
 import { useEffect, useState } from 'react';
-import { NavLink, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { apiGet } from '../../shared/api.js';
 import SignupTerms from './SignupTerms.jsx';
 import SignupForm from './SignupForm.jsx';
 import SignupComplete from './SignupComplete.jsx';
 import FindId from './FindId.jsx';
 import ResetPassword from './ResetPassword.jsx';
-
-const TABS = [
-  ['signup', '회원가입'],
-  ['find-id', '아이디 찾기'],
-  ['reset-password', '비밀번호 재설정'],
-];
 
 /**
  * 계정 화면 컨테이너.
@@ -23,23 +17,11 @@ export default function Account() {
   const { tab } = useParams();
 
   return (
-    <main className="page account-page">
-      <nav className="tabs">
-        {TABS.map(([key, label]) => (
-          <NavLink
-            key={key}
-            to={`/account/${key}`}
-            className={({ isActive }) => (isActive ? 'chip is-active' : 'chip')}
-          >
-            {label}
-          </NavLink>
-        ))}
-      </nav>
-
+    <>
       {tab === 'find-id' && <FindId />}
       {tab === 'reset-password' && <ResetPassword />}
       {(!tab || tab === 'signup') && <Signup />}
-    </main>
+    </>
   );
 }
 

@@ -16,5 +16,6 @@ public record PublicComplaintDetail(
         String answerAdminName,
         String answeredDateTime,
         List<ComplaintFileItem> answerAttachments,
-        List<ComplaintFileItem> attachments) {
+        List<ComplaintFileItem> attachments,
+        boolean canEdit) {
 }
