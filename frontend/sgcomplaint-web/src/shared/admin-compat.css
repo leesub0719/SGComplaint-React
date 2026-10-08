@@ -1,0 +1,40 @@
+/*
+ * React 전환 초기에 styles.css에 있던 임시 관리자 규칙과
+ * 기존 Thymeleaf 관리자 스타일이 동시에 적용될 때 생기는 충돌을 해소한다.
+ */
+.admin-shell {
+  display: block;
+  grid-template-columns: none;
+  min-width: 0;
+}
+
+.admin-shell .admin-workspace {
+  width: auto;
+  min-width: 0;
+}
+
+.admin-shell .admin-nav {
+  display: grid;
+  flex-direction: initial;
+}
+
+.admin-shell .panel-heading {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.admin-shell .stat-card .stat-icon {
+  display: grid;
+  margin: 0;
+  font-size: 22px;
+}
+
+.admin-shell .admin-table td {
+  text-align: left;
+}
+
+@media (max-width: 760px) {
+  .admin-shell .admin-workspace {
+    margin-left: 0;
+  }
+}
