@@ -1,59 +1,45 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useOutletContext, useSearchParams } from 'react-router-dom';
 import { apiGet, apiPost } from '../../shared/api.js';
-import Pagination from '../../shared/Pagination.jsx';
+import AdminPagination from './AdminPagination.jsx';
 
-const STATUS_OPTIONS = [['ALL', '전체'], ['Y', '활동'], ['N', '탈퇴']];
-const ROLE_OPTIONS = [['ALL', '전체'], ['U', '일반회원'], ['A', '관리자'], ['M', '마스터']];
-const ASSIGNABLE_ROLES = [['U', '일반회원'], ['A', '관리자'], ['M', '마스터']];
+const ROLE_OPTIONS = [['ALL', '전체 권한'], ['U', '사용자'], ['A', '관리자'], ['M', '마스터']];
 
-/**
- * 회원 관리 화면.
- *
- * 검색 조건과 페이지를 URL 쿼리로 유지한다. 기존 화면은 권한을 변경할 때마다
- * 검색 조건을 hidden 필드로 다시 실어 보내고 리다이렉트해야 했는데,
- * 여기서는 조건이 URL에 있으므로 목록만 다시 조회하면 된다.
- */
 export default function Members() {
+  const { member: administrator } = useOutletContext();
   const [params, setParams] = useSearchParams();
   const memberStatus = params.get('memberStatus') || 'ALL';
   const memberRole = params.get('memberRole') || 'ALL';
   const keyword = params.get('keyword') || '';
   const page = Number(params.get('page') || 0);
-
   const [keywordInput, setKeywordInput] = useState(keyword);
   const [data, setData] = useState(null);
+  const [selected, setSelected] = useState(null);
+  const [roleDrafts, setRoleDrafts] = useState({});
   const [alert, setAlert] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
-    setLoading(true);
     try {
-      const query = new URLSearchParams({
-        memberStatus, memberRole, keyword, page: String(page),
-      });
+      const query = new URLSearchParams({ memberStatus, memberRole, keyword, page: String(page) });
       setData(await apiGet(`/api/admin/members?${query}`));
     } catch (exception) {
       setAlert({ type: 'error', message: exception.message });
-    } finally {
-      setLoading(false);
     }
   }, [memberStatus, memberRole, keyword, page]);
 
   useEffect(() => { load(); }, [load]);
   useEffect(() => { setKeywordInput(keyword); }, [keyword]);
 
-  const applyFilter = (patch) => setParams({
-    memberStatus, memberRole, keyword, page: '0', ...patch,
-  });
+  const move = (patch) => setParams({ memberStatus, memberRole, keyword, page: '0', ...patch });
+  const summaryFilter = (status, role) => setParams({ memberStatus: status, memberRole: role, keyword: '', page: '0' });
 
-  async function changeRole(member, role) {
-    if (role === member.roleCode) return;
-    if (!window.confirm(`${member.empName}(${member.empId})님의 권한을 변경하시겠습니까?`)) {
-      return;
-    }
+  async function changeRole(target) {
+    const role = roleDrafts[target.empNo] || target.roleCode;
+    if (role === target.roleCode) return;
+    const label = role === 'M' ? '마스터' : role === 'A' ? '관리자' : '사용자';
+    if (!confirm(`${target.empName} 회원의 권한을 ${label}(으)로 변경하시겠습니까?`)) return;
     try {
-      const result = await apiPost(`/api/admin/members/${member.empNo}/role`, { role });
+      const result = await apiPost(`/api/admin/members/${target.empNo}/role`, { role });
       setAlert({ type: 'success', message: result.message });
       load();
     } catch (exception) {
@@ -61,122 +47,150 @@ export default function Members() {
     }
   }
 
+  const members = data?.members?.items || [];
+
   return (
     <>
-      <header className="page-header">
-        <div>
-          <span className="eyebrow">MEMBERS</span>
-          <h1>회원 관리</h1>
-        </div>
-        {data && <span className="count">검색 {data.members.totalElements}명</span>}
-      </header>
+      {alert && <div className={`flash-message ${alert.type}`}>{alert.message}</div>}
 
-      {alert && <p className={`message ${alert.type}`}>{alert.message}</p>}
-
-      <section className="stat-row">
-        <StatCard label="전체" value={data?.totalMemberCount} />
-        <StatCard label="활동" value={data?.activeMemberCount} />
-        <StatCard label="탈퇴" value={data?.withdrawnMemberCount} />
-        <StatCard label="관리자" value={data?.administratorCount} />
-        <StatCard label="마스터" value={data?.masterCount} />
+      <section className="member-summary-grid" aria-label="회원 현황">
+        <Summary label="전체 회원" value={data?.totalMemberCount} caption="등록된 전체 계정" onClick={() => summaryFilter('ALL', 'ALL')} />
+        <Summary label="이용중" value={data?.activeMemberCount} caption="상태 Y" onClick={() => summaryFilter('Y', 'ALL')} />
+        <Summary label="탈퇴 회원" value={data?.withdrawnMemberCount} caption="상태 N" onClick={() => summaryFilter('N', 'ALL')} />
+        <Summary label="관리자" value={data?.administratorCount} caption="권한 A" onClick={() => summaryFilter('ALL', 'A')} />
+        <Summary label="마스터" value={data?.masterCount} caption="권한 M" onClick={() => summaryFilter('ALL', 'M')} />
       </section>
 
-      <section className="panel">
-        <div className="panel-header">
-          <div className="filters">
-            <select value={memberStatus} onChange={(e) => applyFilter({ memberStatus: e.target.value })}>
-              {STATUS_OPTIONS.map(([value, label]) => (
-                <option key={value} value={value}>상태: {label}</option>
-              ))}
-            </select>
-            <select value={memberRole} onChange={(e) => applyFilter({ memberRole: e.target.value })}>
-              {ROLE_OPTIONS.map(([value, label]) => (
-                <option key={value} value={value}>권한: {label}</option>
-              ))}
-            </select>
-          </div>
-
-          <form
-            className="search"
-            onSubmit={(event) => {
-              event.preventDefault();
-              applyFilter({ keyword: keywordInput.trim() });
-            }}
-          >
-            <input
-              value={keywordInput}
-              onChange={(event) => setKeywordInput(event.target.value)}
-              placeholder="아이디 · 이름 검색"
-            />
-            <button type="submit">검색</button>
-          </form>
+      <section className="admin-panel member-panel">
+        <div className="panel-heading">
+          <div><h2>회원 목록</h2></div>
+          <em>검색 결과 <b>{data?.members?.totalElements ?? 0}</b>명</em>
         </div>
 
-        {loading && <p className="message">불러오는 중입니다.</p>}
+        <form
+          className="member-search"
+          onSubmit={(event) => {
+            event.preventDefault();
+            move({ keyword: keywordInput.trim() });
+          }}
+        >
+          <label className="sr-only" htmlFor="member-status">회원 상태</label>
+          <select id="member-status" value={memberStatus} onChange={(event) => move({ memberStatus: event.target.value })}>
+            <option value="ALL">전체 상태</option><option value="Y">이용중</option><option value="N">탈퇴 회원</option>
+          </select>
+          <label className="sr-only" htmlFor="member-role">회원 권한</label>
+          <select id="member-role" value={memberRole} onChange={(event) => move({ memberRole: event.target.value })}>
+            {ROLE_OPTIONS.map(([code, label]) => <option key={code} value={code}>{label}</option>)}
+          </select>
+          <label className="sr-only" htmlFor="member-keyword">아이디 또는 이름</label>
+          <input
+            id="member-keyword"
+            type="search"
+            maxLength="50"
+            value={keywordInput}
+            onChange={(event) => setKeywordInput(event.target.value)}
+            placeholder="아이디·이름·이메일·전화번호 앞부분 검색"
+          />
+          <button type="submit">검색</button>
+        </form>
 
-        {!loading && data && (
-          <>
-            <div className="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>아이디</th><th>이름</th><th>연락처</th>
-                    <th>상태</th><th>가입일</th><th>권한</th>
+        <div className="admin-table-wrap">
+          <table className="admin-table member-table">
+            <thead><tr><th>회원번호</th><th>아이디</th><th>이름</th><th>휴대전화</th><th>권한</th><th>상태</th><th>가입일</th><th>권한 관리</th></tr></thead>
+            <tbody>
+              {members.map((item) => {
+                const masterLocked = item.roleCode === 'M' && !administrator?.master;
+                const disabled = item.currentAdministrator || masterLocked;
+                return (
+                  <tr key={item.empNo}>
+                    <td>{item.empNo}</td>
+                    <td>
+                      <button className="member-id-button" type="button" onClick={() => setSelected(item)}>{item.empId}</button>
+                      {item.currentAdministrator && <small className="current-account-label">현재 계정</small>}
+                      {item.withdrawalOriginalId && <small>탈퇴 전: {item.withdrawalOriginalId}</small>}
+                    </td>
+                    <td>{item.empName}</td><td>{item.empPhone}</td>
+                    <td><RoleBadge member={item} /></td>
+                    <td><StatusBadge member={item} /></td>
+                    <td>{item.createdDate}</td>
+                    <td>
+                      {item.currentAdministrator && <span className="self-role-lock">변경 불가</span>}
+                      {masterLocked && <span className="self-role-lock">마스터 전용</span>}
+                      {!disabled && (
+                        <div className="member-role-form">
+                          <select
+                            aria-label={`${item.empName} 회원 권한`}
+                            value={roleDrafts[item.empNo] || item.roleCode}
+                            onChange={(event) => setRoleDrafts({ ...roleDrafts, [item.empNo]: event.target.value })}
+                          >
+                            <option value="U">사용자</option><option value="A">관리자</option>
+                            {administrator?.master && <option value="M">마스터</option>}
+                          </select>
+                          <button type="button" onClick={() => changeRole(item)}>변경</button>
+                        </div>
+                      )}
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {data.members.items.map((member) => (
-                    <tr key={member.empNo}>
-                      <td>
-                        {member.empId}
-                        {member.currentAdministrator && <span className="tag">나</span>}
-                      </td>
-                      <td>{member.empName}</td>
-                      <td>{member.empPhone}</td>
-                      <td>
-                        <span className={member.statusCode === 'Y' ? 'badge active' : 'badge'}>
-                          {member.statusLabel}
-                        </span>
-                      </td>
-                      <td>{member.createdDate}</td>
-                      <td>
-                        <select
-                          value={member.roleCode}
-                          disabled={member.statusCode !== 'Y' || member.currentAdministrator}
-                          onChange={(event) => changeRole(member, event.target.value)}
-                        >
-                          {ASSIGNABLE_ROLES.map(([value, label]) => (
-                            <option key={value} value={value}>{label}</option>
-                          ))}
-                        </select>
-                      </td>
-                    </tr>
-                  ))}
-                  {data.members.items.length === 0 && (
-                    <tr><td colSpan="6" className="message">검색 결과가 없습니다.</td></tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                );
+              })}
+              {!members.length && <tr><td className="table-empty" colSpan="8">검색 조건에 해당하는 회원이 없습니다.</td></tr>}
+            </tbody>
+          </table>
+        </div>
 
-            <Pagination page={{
-              ...data.members,
-              onChange: (next) => setParams({
-                memberStatus, memberRole, keyword, page: String(next),
-              }),
-            }} />
-          </>
-        )}
+        <AdminPagination
+          page={data?.members}
+          radius={2}
+          onChange={(next) => setParams({ memberStatus, memberRole, keyword, page: String(next) })}
+        />
+        <p className="member-role-notice">권한을 변경한 회원은 로그아웃 후 다시 로그인해야 새 권한이 적용됩니다.</p>
       </section>
+
+      {selected && <MemberModal member={selected} onClose={() => setSelected(null)} />}
     </>
   );
 }
 
-function StatCard({ label, value }) {
+function Summary({ label, value, caption, onClick }) {
+  return <article><span>{label}</span><a href="#" onClick={(event) => { event.preventDefault(); onClick(); }}>{value ?? 0}</a><small>{caption}</small></article>;
+}
+
+function RoleBadge({ member }) {
+  const type = member.roleCode === 'M' ? 'master' : member.roleCode === 'A' ? 'admin' : 'user';
+  return <span className={`member-role-badge ${type}`}>{member.roleLabel}</span>;
+}
+
+function StatusBadge({ member }) {
+  return <span className={`member-status-badge ${member.statusCode === 'Y' ? 'active' : 'withdrawn'}`}>{member.statusLabel}</span>;
+}
+
+function MemberModal({ member, onClose }) {
   return (
-    <div className="stat-card">
-      <span>{label}</span>
-      <strong>{value ?? '-'}</strong>
+    <div className="member-modal">
+      <div className="member-modal-backdrop" onClick={onClose} />
+      <section className="member-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="member-modal-title">
+        <header className="member-modal-header"><div><h2 id="member-modal-title">회원 상세정보</h2></div><button type="button" onClick={onClose}>×</button></header>
+        <div className="member-modal-body">
+          <div className="member-profile-summary">
+            <span>{member.empName?.slice(0, 1)}</span>
+            <div><strong>{member.empName}</strong><p><b>{member.empId}</b> · 회원번호 <em>{member.empNo}</em></p></div>
+            <StatusBadge member={member} />
+          </div>
+          <dl className="member-detail-grid">
+            <div><dt>회원번호</dt><dd>{member.empNo}</dd></div><div><dt>아이디</dt><dd>{member.empId}</dd></div>
+            {member.withdrawalOriginalId && <div><dt>탈퇴 전 아이디</dt><dd>{member.withdrawalOriginalId}</dd></div>}
+            <div><dt>이름</dt><dd>{member.empName}</dd></div><div><dt>휴대전화</dt><dd>{member.empPhone}</dd></div>
+            <div className="wide"><dt>이메일</dt><dd>{member.empEmail || '-'}</dd></div>
+            <div className="wide"><dt>주소</dt><dd>{member.empAddress || '-'}</dd></div>
+            <div><dt>권한</dt><dd><RoleBadge member={member} /></dd></div>
+            <div><dt>상태</dt><dd><StatusBadge member={member} /></dd></div>
+            <div><dt>가입일시</dt><dd>{member.createdDateTime}</dd></div>
+            <div><dt>수정일시</dt><dd>{member.updatedDateTime}</dd></div>
+          </dl>
+          <p className="password-security-notice">비밀번호는 BCrypt로 암호화되어 저장되며 관리자 화면에도 표시하지 않습니다.</p>
+        </div>
+        <footer className="member-modal-footer"><button type="button" onClick={onClose}>닫기</button></footer>
+      </section>
     </div>
   );
 }

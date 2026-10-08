@@ -33,20 +33,29 @@ public class LayoutApiController {
                 && !(authentication instanceof AnonymousAuthenticationToken);
 
         if (!loggedIn) {
-            return new LayoutMember(false, null, false);
+            return new LayoutMember(false, null, false, false, null);
         }
 
         boolean hasAdminAuthority = authentication.getAuthorities().stream()
                 .anyMatch(authority -> "ROLE_ADMIN".equals(authority.getAuthority())
                         || "ROLE_MASTER".equals(authority.getAuthority()));
+        boolean hasMasterAuthority = authentication.getAuthorities().stream()
+                .anyMatch(authority -> "ROLE_MASTER".equals(authority.getAuthority()));
 
         return new LayoutMember(
                 true,
                 employeeService.getActiveEmployeeName(authentication.getName()),
                 hasAdminAuthority
-                        && employeeService.isActiveAdministrator(authentication.getName()));
+                        && employeeService.isActiveAdministrator(authentication.getName()),
+                hasMasterAuthority,
+                hasMasterAuthority ? "Master" : "Administrator");
     }
 
-    public record LayoutMember(boolean loggedIn, String memberName, boolean admin) {
+    public record LayoutMember(
+            boolean loggedIn,
+            String memberName,
+            boolean admin,
+            boolean master,
+            String roleLabel) {
     }
 }

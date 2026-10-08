@@ -1,131 +1,100 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { apiGet } from '../../shared/api.js';
-import Pagination from '../../shared/Pagination.jsx';
+import AdminPagination from './AdminPagination.jsx';
+import ComplaintDetailModal from './ComplaintDetailModal.jsx';
 
-const STATUS_FILTERS = [
-  ['ALL', '전체'],
-  ['CHECKING', '확인중'],
-  ['PROCESSING', '처리중'],
-  ['COMPLETED', '답변완료'],
-];
+const STATUS = {
+  ALL: { label: '전체', icon: '▤', tone: 'green', caption: '누적 접수' },
+  CHECKING: { label: '확인중', icon: '◷', tone: 'yellow', caption: '확인 필요' },
+  PROCESSING: { label: '처리중', icon: '↻', tone: 'blue', caption: '담당자 처리' },
+  COMPLETED: { label: '답변완료', icon: '✓', tone: 'mint', caption: '처리 완료' },
+};
 
-/**
- * 관리자 대시보드.
- *
- * 필터와 페이지 번호를 useState가 아니라 URL 쿼리(useSearchParams)에 둔다.
- * 새로고침해도 상태가 유지되고, 특정 목록 화면을 링크로 공유할 수 있다.
- */
 export default function Dashboard() {
   const [params, setParams] = useSearchParams();
   const status = params.get('status') || 'ALL';
   const page = Number(params.get('page') || 0);
-
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const controller = new AbortController();
-    setLoading(true);
     setError('');
-
     apiGet(`/api/admin/dashboard?status=${status}&page=${page}`)
       .then(setData)
-      .catch((exception) => {
-        if (exception.name !== 'AbortError') setError(exception.message);
-      })
-      .finally(() => setLoading(false));
-
-    return () => controller.abort();
+      .catch((exception) => setError(exception.message));
   }, [status, page]);
 
-  const update = (next) => setParams(next, { replace: false });
+  const counts = {
+    ALL: data?.totalComplaints,
+    CHECKING: data?.checkingCount,
+    PROCESSING: data?.processingCount,
+    COMPLETED: data?.completedCount,
+  };
+
+  const changeStatus = (next) => setParams({ status: next, page: '0' });
+  const complaints = data?.complaints?.items || [];
 
   return (
     <>
-      <header className="page-header">
-        <div>
-          <span className="eyebrow">DASHBOARD</span>
-          <h1>대시보드</h1>
-        </div>
-      </header>
+      {error && <div className="flash-message error">{error}</div>}
 
-      {error && <p className="message error">{error}</p>}
-
-      <section className="stat-row">
-        <StatCard label="전체 민원" value={data?.totalComplaints} />
-        <StatCard label="확인중" value={data?.checkingCount} tone="checking" />
-        <StatCard label="처리중" value={data?.processingCount} tone="processing" />
-        <StatCard label="답변완료" value={data?.completedCount} tone="completed" />
-        <StatCard label="활동 회원" value={data?.activeMemberCount} />
-      </section>
-
-      <section className="panel">
-        <div className="panel-header">
-          <h2>최근 민원</h2>
-          <div className="filters">
-            {STATUS_FILTERS.map(([value, label]) => (
-              <button
-                key={value}
-                type="button"
-                className={status === value ? 'chip is-active' : 'chip'}
-                onClick={() => update({ status: value, page: '0' })}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {loading && <p className="message">불러오는 중입니다.</p>}
-
-        {!loading && data && (
-          <>
-            <div className="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>번호</th><th>분류</th><th>제목</th>
-                    <th>작성자</th><th>상태</th><th>등록일시</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.complaints.items.map((item) => (
-                    <tr key={item.complaintNo}>
-                      <td>{item.complaintNo}</td>
-                      <td>{item.categoryLabel}</td>
-                      <td className="title">{item.title}</td>
-                      <td>{item.memberName}</td>
-                      <td>
-                        <span className={`badge ${item.statusCssClass}`}>{item.statusLabel}</span>
-                      </td>
-                      <td>{item.registeredDateTime}</td>
-                    </tr>
-                  ))}
-                  {data.complaints.items.length === 0 && (
-                    <tr><td colSpan="6" className="message">민원이 없습니다.</td></tr>
-                  )}
-                </tbody>
-              </table>
+      <section className="stat-grid" aria-label="업무 현황">
+        {Object.entries(STATUS).map(([code, item]) => (
+          <article key={code} className={status === code ? 'stat-card selected' : 'stat-card'}>
+            <span className={`stat-icon ${item.tone}`}>{item.icon}</span>
+            <div>
+              <p>{code === 'ALL' ? '전체 민원' : item.label}</p>
+              <a className="stat-number" href="#" onClick={(event) => { event.preventDefault(); changeStatus(code); }}>
+                {counts[code] ?? 0}
+              </a>
+              <small>{item.caption}</small>
             </div>
-
-            <Pagination page={{
-              ...data.complaints,
-              onChange: (next) => update({ status, page: String(next) }),
-            }} />
-          </>
-        )}
+          </article>
+        ))}
       </section>
-    </>
-  );
-}
 
-function StatCard({ label, value, tone }) {
-  return (
-    <div className={tone ? `stat-card ${tone}` : 'stat-card'}>
-      <span>{label}</span>
-      <strong>{value ?? '-'}</strong>
-    </div>
+      <section className="dashboard-grid">
+        <article className="admin-panel recent-panel">
+          <div className="panel-heading">
+            <div><h2><b>{STATUS[status]?.label || '전체'}</b> 민원</h2></div>
+            <Link to={`/admin/complaints?status=${status}`}>전체보기 →</Link>
+          </div>
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead><tr><th>민원번호</th><th>신청인</th><th>제목</th><th>상태</th><th>등록일</th></tr></thead>
+              <tbody>
+                {complaints.map((item) => (
+                  <tr key={item.complaintNo}>
+                    <td>{item.complaintNo}</td>
+                    <td>{item.memberName}</td>
+                    <td className="title-cell">
+                      <button className="complaint-title-button" type="button" onClick={() => setSelected(item)}>{item.title}</button>
+                    </td>
+                    <td><span className={`admin-status ${item.statusCssClass}`}>{item.statusLabel}</span></td>
+                    <td>{item.registeredDateTime}</td>
+                  </tr>
+                ))}
+                {!complaints.length && <tr><td className="table-empty" colSpan="5">접수된 민원이 없습니다.</td></tr>}
+              </tbody>
+            </table>
+          </div>
+          <AdminPagination
+            page={data?.complaints}
+            onChange={(next) => setParams({ status, page: String(next) })}
+          />
+        </article>
+
+        <aside className="admin-panel quick-panel">
+          <div className="panel-heading"><div><h2>빠른 업무</h2></div></div>
+          <Link to="/admin/complaints?status=CHECKING"><span>확인 대기 민원</span><strong>{data?.checkingCount ?? 0}</strong></Link>
+          <Link to="/admin/notices/new"><span>공지사항 등록</span><b>바로가기</b></Link>
+          <Link to="/admin/members"><span>이용 회원</span><strong>{data?.activeMemberCount ?? 0}</strong></Link>
+        </aside>
+      </section>
+
+      {selected && <ComplaintDetailModal complaint={selected} onClose={() => setSelected(null)} />}
+    </>
   );
 }

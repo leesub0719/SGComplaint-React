@@ -1,7 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import PublicLayout from './shared/PublicLayout.jsx';
 import AdminLayout from './shared/AdminLayout.jsx';
-
 import ComplaintList from './pages/complaints/List.jsx';
 import ComplaintNew from './pages/complaints/New.jsx';
 import ComplaintDetail from './pages/complaints/Detail.jsx';
@@ -42,7 +41,6 @@ export default function App() {
           <Route path="/recruit/notices" element={<ComingSoon title="채용공고" />} />
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/mypage/inquiries" element={<MyInquiries />} />
-          {/* 회원가입·아이디찾기·비밀번호재설정은 한 컴포넌트가 탭으로 처리한다. */}
           <Route path="/account/:tab" element={<Account />} />
           <Route path="/account" element={<Navigate to="/account/signup" replace />} />
         </Route>
@@ -53,6 +51,8 @@ export default function App() {
           <Route path="complaints" element={<AdminComplaints />} />
           <Route path="members" element={<AdminMembers />} />
           <Route path="notices" element={<AdminNotices />} />
+          <Route path="notices/new" element={<AdminNotices />} />
+          <Route path="notices/:noticeNo/edit" element={<AdminNotices />} />
           <Route path="routes" element={<AdminRoutes />} />
           <Route path="partners" element={<AdminPartners />} />
           <Route path="main-page" element={<AdminMainPage />} />
