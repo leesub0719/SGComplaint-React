@@ -18,7 +18,7 @@ public class NoticeImageController {
     public NoticeImageController(NoticeService noticeService) { this.noticeService = noticeService; }
 
     @GetMapping("/{noticeImageNo}")
-    public ResponseEntity<Resource> image(@PathVariable Long noticeImageNo) {
+    public ResponseEntity<Resource> image(@PathVariable(name = "noticeImageNo") Long noticeImageNo) {
         try {
             StoredAttachment image = noticeService.getNoticeImage(noticeImageNo);
             return ResponseEntity.ok()

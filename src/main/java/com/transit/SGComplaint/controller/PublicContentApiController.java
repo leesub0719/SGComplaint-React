@@ -33,18 +33,18 @@ public class PublicContentApiController {
     }
 
     @GetMapping("/notices")
-    public PageResponse<NoticeItem> notices(@RequestParam(defaultValue = "") String keyword,
-            @RequestParam(defaultValue = "0") int page) {
+    public PageResponse<NoticeItem> notices(@RequestParam(name = "keyword", defaultValue = "") String keyword,
+            @RequestParam(name = "page", defaultValue = "0") int page) {
         return PageResponse.from(noticeService.getNoticePage(keyword, page));
     }
 
     @GetMapping("/notices/{noticeNo}")
-    public NoticeDetail notice(@PathVariable Long noticeNo) {
+    public NoticeDetail notice(@PathVariable(name = "noticeNo") Long noticeNo) {
         return noticeService.getNoticeDetail(noticeNo);
     }
 
     @GetMapping("/routes")
-    public RouteResponse routes(@RequestParam(defaultValue = RouteOperationService.VILLAGE) String type) {
+    public RouteResponse routes(@RequestParam(name = "type", defaultValue = RouteOperationService.VILLAGE) String type) {
         return new RouteResponse(routeService.getPublicRoutes(type),
                 RouteOperationService.DDOK.equalsIgnoreCase(type) ? imageService.getImages() : List.of());
     }

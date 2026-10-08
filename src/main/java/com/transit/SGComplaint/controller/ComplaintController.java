@@ -20,8 +20,9 @@ public class ComplaintController {
     public ComplaintController(ComplaintService complaintService) { this.complaintService = complaintService; }
 
     @PostMapping("/{complaintNo}/verify")
-    public ResponseEntity<ComplaintPasswordResponse> verify(@PathVariable Long complaintNo,
-            @RequestParam String password, HttpSession session) {
+    public ResponseEntity<ComplaintPasswordResponse> verify(
+            @PathVariable(name = "complaintNo") Long complaintNo,
+            @RequestParam(name = "password") String password, HttpSession session) {
         try {
             Long locked = (Long) session.getAttribute(lockKey(complaintNo));
             if (locked != null && locked > System.currentTimeMillis()) {
@@ -50,7 +51,7 @@ public class ComplaintController {
     }
 
     @GetMapping("/view/{complaintNo}")
-    public PublicComplaintDetail detail(@PathVariable Long complaintNo, HttpSession session,
+    public PublicComplaintDetail detail(@PathVariable(name = "complaintNo") Long complaintNo, HttpSession session,
             Authentication authentication) {
         requireVerified(session, complaintNo);
         return complaintService.getPublicComplaint(complaintNo,
@@ -74,19 +75,20 @@ public class ComplaintController {
     }
 
     @GetMapping("/view/{complaintNo}/attachments/{attachmentNo}")
-    public ResponseEntity<Resource> complaintFile(@PathVariable Long complaintNo,
-            @PathVariable Long attachmentNo, HttpSession session) {
+    public ResponseEntity<Resource> complaintFile(@PathVariable(name = "complaintNo") Long complaintNo,
+            @PathVariable(name = "attachmentNo") Long attachmentNo, HttpSession session) {
         requireVerified(session, complaintNo);
         return download(complaintService.getPublicComplaintAttachment(complaintNo, attachmentNo));
     }
     @GetMapping("/view/{complaintNo}/answer-attachments/{attachmentNo}")
-    public ResponseEntity<Resource> answerFile(@PathVariable Long complaintNo,
-            @PathVariable Long attachmentNo, HttpSession session) {
+    public ResponseEntity<Resource> answerFile(@PathVariable(name = "complaintNo") Long complaintNo,
+            @PathVariable(name = "attachmentNo") Long attachmentNo, HttpSession session) {
         requireVerified(session, complaintNo);
         return download(complaintService.getPublicComplaintAnswerAttachment(complaintNo, attachmentNo));
     }
     @GetMapping("/answer-attachments/{attachmentNo}")
-    public ResponseEntity<Resource> memberAnswerFile(Authentication authentication, @PathVariable Long attachmentNo) {
+    public ResponseEntity<Resource> memberAnswerFile(Authentication authentication,
+            @PathVariable(name = "attachmentNo") Long attachmentNo) {
         return download(complaintService.getMemberAnswerAttachment(authentication.getName(), attachmentNo));
     }
 

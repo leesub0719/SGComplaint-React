@@ -14,11 +14,11 @@ public class AdminFileController {
     private final AdminComplaintService service;
     public AdminFileController(AdminComplaintService service) { this.service = service; }
     @GetMapping("/complaints/attachments/{attachmentNo}")
-    public ResponseEntity<Resource> complaint(@PathVariable Long attachmentNo) {
+    public ResponseEntity<Resource> complaint(@PathVariable(name = "attachmentNo") Long attachmentNo) {
         return download(service.getComplaintAttachment(attachmentNo));
     }
     @GetMapping("/answers/attachments/{attachmentNo}")
-    public ResponseEntity<Resource> answer(@PathVariable Long attachmentNo) {
+    public ResponseEntity<Resource> answer(@PathVariable(name = "attachmentNo") Long attachmentNo) {
         return download(service.getAnswerAttachment(attachmentNo));
     }
     private ResponseEntity<Resource> download(StoredAttachment attachment) {

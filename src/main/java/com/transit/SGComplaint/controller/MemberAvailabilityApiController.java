@@ -11,7 +11,7 @@ public class MemberAvailabilityApiController {
     public MemberAvailabilityApiController(EmployeeService employeeService) { this.employeeService = employeeService; }
 
     @GetMapping("/check-id")
-    public Map<String, Boolean> checkId(@RequestParam String empId) {
+    public Map<String, Boolean> checkId(@RequestParam(name = "empId") String empId) {
         return Map.of("available", employeeService.isEmpIdAvailable(empId));
     }
 }

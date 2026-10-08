@@ -28,11 +28,11 @@ public class AdminContentApiController {
     }
 
     @GetMapping("/notices")
-    public PageResponse<NoticeItem> notices(@RequestParam(defaultValue = "0") int page) {
+    public PageResponse<NoticeItem> notices(@RequestParam(name = "page", defaultValue = "0") int page) {
         return PageResponse.from(noticeService.getAdminNoticePage(page));
     }
     @GetMapping("/notices/{noticeNo}")
-    public NoticeCreateRequest notice(Authentication auth, @PathVariable Long noticeNo) {
+    public NoticeCreateRequest notice(Authentication auth, @PathVariable(name = "noticeNo") Long noticeNo) {
         return noticeService.getNoticeEditRequest(auth.getName(), noticeNo);
     }
     @PostMapping("/notices")
@@ -41,18 +41,18 @@ public class AdminContentApiController {
         return AdminApiResponse.ok("공지사항 " + no + "번이 등록되었습니다.");
     }
     @PostMapping("/notices/{noticeNo}")
-    public AdminApiResponse updateNotice(Authentication auth, @PathVariable Long noticeNo,
+    public AdminApiResponse updateNotice(Authentication auth, @PathVariable(name = "noticeNo") Long noticeNo,
             @Valid @ModelAttribute NoticeCreateRequest request) {
         noticeService.updateNotice(auth.getName(), noticeNo, request);
         return AdminApiResponse.ok("공지사항이 수정되었습니다.");
     }
     @DeleteMapping("/notices/{noticeNo}")
-    public AdminApiResponse deleteNotice(Authentication auth, @PathVariable Long noticeNo) {
+    public AdminApiResponse deleteNotice(Authentication auth, @PathVariable(name = "noticeNo") Long noticeNo) {
         noticeService.deleteNotice(auth.getName(), noticeNo);
         return AdminApiResponse.ok("공지사항이 삭제되었습니다.");
     }
     @PatchMapping("/notices/{noticeNo}/popup")
-    public AdminApiResponse popup(Authentication auth, @PathVariable Long noticeNo, @RequestBody PopupRequest request) {
+    public AdminApiResponse popup(Authentication auth, @PathVariable(name = "noticeNo") Long noticeNo, @RequestBody PopupRequest request) {
         noticeService.changePopupSetting(auth.getName(), noticeNo, request.popup());
         return AdminApiResponse.ok(request.popup() ? "메인 팝업을 사용합니다." : "메인 팝업을 해제했습니다.");
     }
@@ -67,11 +67,11 @@ public class AdminContentApiController {
         return AdminApiResponse.ok("운행안내 " + routeService.createRoute(request) + "번을 등록했습니다.");
     }
     @PutMapping("/routes/{routeNo}")
-    public AdminApiResponse updateRoute(@PathVariable Long routeNo, @Valid @RequestBody RouteOperationRequest request) {
+    public AdminApiResponse updateRoute(@PathVariable(name = "routeNo") Long routeNo, @Valid @RequestBody RouteOperationRequest request) {
         return AdminApiResponse.ok(routeService.updateRoute(routeNo, request));
     }
     @DeleteMapping("/routes/{routeNo}")
-    public AdminApiResponse deleteRoute(Authentication auth, @PathVariable Long routeNo) {
+    public AdminApiResponse deleteRoute(Authentication auth, @PathVariable(name = "routeNo") Long routeNo) {
         return AdminApiResponse.ok(routeService.deleteRoute(auth.getName(), routeNo));
     }
     @PostMapping("/routes/guide-images")
@@ -79,14 +79,14 @@ public class AdminContentApiController {
         return AdminApiResponse.ok("똑버스 안내 이미지 " + routeImageService.addImage(image) + "번을 등록했습니다.");
     }
     @DeleteMapping("/routes/guide-images/{imageNo}")
-    public AdminApiResponse deleteRouteImage(@PathVariable Long imageNo) {
+    public AdminApiResponse deleteRouteImage(@PathVariable(name = "imageNo") Long imageNo) {
         routeImageService.deleteImage(imageNo);
         return AdminApiResponse.ok("똑버스 안내 이미지를 삭제했습니다.");
     }
 
     @GetMapping("/partners")
-    public PartnerAdminResponse partners(@RequestParam(defaultValue = "") String keyword,
-            @RequestParam(defaultValue = "0") int page) {
+    public PartnerAdminResponse partners(@RequestParam(name = "keyword", defaultValue = "") String keyword,
+            @RequestParam(name = "page", defaultValue = "0") int page) {
         return new PartnerAdminResponse(PageResponse.from(partnerService.searchPartners(keyword, page)),
                 partnerService.countPartners());
     }
@@ -95,11 +95,11 @@ public class AdminContentApiController {
         return AdminApiResponse.ok("협력업체 " + partnerService.createPartner(request) + "번을 등록했습니다.");
     }
     @PutMapping("/partners/{partnerNo}")
-    public AdminApiResponse updatePartner(@PathVariable Long partnerNo, @Valid @RequestBody PartnerRequest request) {
+    public AdminApiResponse updatePartner(@PathVariable(name = "partnerNo") Long partnerNo, @Valid @RequestBody PartnerRequest request) {
         return AdminApiResponse.ok(partnerService.updatePartner(partnerNo, request));
     }
     @DeleteMapping("/partners/{partnerNo}")
-    public AdminApiResponse deletePartner(@PathVariable Long partnerNo) {
+    public AdminApiResponse deletePartner(@PathVariable(name = "partnerNo") Long partnerNo) {
         return AdminApiResponse.ok(partnerService.deletePartner(partnerNo));
     }
 
@@ -113,7 +113,7 @@ public class AdminContentApiController {
         return AdminApiResponse.ok("메인 배너 이미지 " + bannerService.addBanners(auth.getName(), images) + "장을 등록했습니다.");
     }
     @DeleteMapping("/main-page/banners/{bannerNo}")
-    public AdminApiResponse deleteBanner(Authentication auth, @PathVariable Long bannerNo) {
+    public AdminApiResponse deleteBanner(Authentication auth, @PathVariable(name = "bannerNo") Long bannerNo) {
         bannerService.deleteBanner(auth.getName(), bannerNo);
         return AdminApiResponse.ok("메인 배너 이미지를 삭제했습니다.");
     }
