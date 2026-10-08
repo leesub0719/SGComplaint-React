@@ -33,4 +33,8 @@ class ReactOnlyArchitectureTests {
         assertFalse(interceptsIndex);
         assertTrue(handlesReactRoute);
     }
+
+    @Test void rootRedirectsToReactBasePath() {
+        assertEquals("redirect:/app/", new ReactAppController().root());
+    }
 }

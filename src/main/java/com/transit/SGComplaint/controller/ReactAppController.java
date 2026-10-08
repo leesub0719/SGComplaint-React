@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ReactAppController {
 
     @GetMapping({
-            "/",
             "/app",
             "/app/",
             "/app/login",
@@ -40,5 +39,10 @@ public class ReactAppController {
     })
     public String app() {
         return "forward:/app/index.html";
+    }
+
+    @GetMapping("/")
+    public String root() {
+        return "redirect:/app/";
     }
 }
