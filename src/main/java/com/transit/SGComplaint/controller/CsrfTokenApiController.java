@@ -23,6 +23,7 @@ public class CsrfTokenApiController {
     public Map<String, String> csrfToken(CsrfToken token) {
         return Map.of(
                 "headerName", token.getHeaderName(),
+                "parameterName", token.getParameterName(),
                 "token", token.getToken());
     }
 }
