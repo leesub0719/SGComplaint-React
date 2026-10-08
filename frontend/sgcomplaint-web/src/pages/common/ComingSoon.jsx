@@ -1,0 +1,1 @@
+export default function ComingSoon({ title = '페이지 준비 중' }) { return <main className="page narrow-page"><section className="content-card"><h1>{title}</h1><p>React 화면으로 전환된 준비 페이지입니다.</p></section></main>; }

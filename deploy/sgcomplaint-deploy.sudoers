@@ -1,0 +1,1 @@
+sgadmin ALL=(root) NOPASSWD: /usr/local/sbin/sgcomplaint-deploy

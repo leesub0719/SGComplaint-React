@@ -1,0 +1,1 @@
+export default function Greeting() { return <main className="page"><section className="content-card prose"><span className="eyebrow">COMPANY</span><h1>인사말</h1><h2>안전한 이동과 따뜻한 서비스를 약속합니다.</h2><p>서경 마을버스는 시민의 가까운 이동을 책임지는 생활 교통수단으로서 안전 운행과 친절 서비스를 가장 중요한 가치로 생각합니다.</p><p>현장의 의견을 경청하고 더 편리한 노선과 서비스를 만들기 위해 꾸준히 개선하겠습니다.</p></section></main>; }

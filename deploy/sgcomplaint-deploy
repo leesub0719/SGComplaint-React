@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+[[ "$EUID" -eq 0 ]] || { echo "Run with sudo." >&2; exit 2; }
+
+incoming_jar="/opt/sgcomplaint/incoming/sgcomplaint.jar"
+app_jar="/opt/sgcomplaint/app/sgcomplaint.jar"
+migration_script="/opt/sgcomplaint/app/db-migrate.sh"
+backup_dir="/opt/sgcomplaint/backup"
+maintenance_file="/run/sgcomplaint-maintenance"
+health_url="http://127.0.0.1:9081/actuator/health"
+stamp=$(date +%Y%m%d_%H%M%S)
+backup_jar="$backup_dir/sgcomplaint_$stamp.jar"
+
+for command in systemctl curl flock install sha256sum stat; do
+  command -v "$command" >/dev/null || { echo "Missing command: $command" >&2; exit 2; }
+done
+
+[[ -f "$incoming_jar" && ! -L "$incoming_jar" ]] || {
+  echo "Incoming JAR not found or is a symbolic link: $incoming_jar" >&2
+  exit 2
+}
+[[ -s "$incoming_jar" ]] || { echo "Incoming JAR is empty." >&2; exit 2; }
+[[ -f "$migration_script" && ! -L "$migration_script" ]] || {
+  echo "Trusted migration script not found: $migration_script" >&2
+  exit 2
+}
+[[ "$(stat -c '%u' "$migration_script")" == "0" ]] || {
+  echo "Migration script must be owned by root." >&2
+  exit 2
+}
+[[ "$(stat -c '%a' "$migration_script")" == "750" ]] || {
+  echo "Migration script permissions must be 750." >&2
+  exit 2
+}
+
+install -d -o sgadmin -g sgcomplaint -m 0750 /opt/sgcomplaint/incoming
+install -d -o root -g sgcomplaint -m 0750 "$backup_dir"
+
+exec 9>/run/lock/sgcomplaint-deploy.lock
+flock -n 9 || { echo "Another deployment is running." >&2; exit 1; }
+
+touch "$maintenance_file"
+cleanup() {
+  rm -f "$maintenance_file"
+}
+trap cleanup EXIT
+
+wait_for_health() {
+  local attempt response
+  for attempt in $(seq 1 30); do
+    response=$(curl --fail --silent --show-error --max-time 5 "$health_url" 2>/dev/null || true)
+    if [[ "$response" == *'"status":"UP"'* ]]; then
+      return 0
+    fi
+    sleep 2
+  done
+  return 1
+}
+
+rollback_jar() {
+  echo "Rolling back the application JAR. Database migrations are not reversed."
+  systemctl stop sgcomplaint || true
+  if [[ -f "$backup_jar" ]]; then
+    install -o root -g sgcomplaint -m 0640 "$backup_jar" "$app_jar"
+    systemctl start sgcomplaint
+    wait_for_health || true
+  fi
+}
+
+echo "Incoming artifact: $(sha256sum "$incoming_jar")"
+
+if [[ -f "$app_jar" ]]; then
+  install -o root -g sgcomplaint -m 0640 "$app_jar" "$backup_jar"
+  echo "Backup created: $backup_jar"
+fi
+
+systemctl stop sgcomplaint
+install -o root -g sgcomplaint -m 0640 "$incoming_jar" "$app_jar"
+
+if ! bash "$migration_script" info \
+  || ! bash "$migration_script" migrate \
+  || ! bash "$migration_script" validate \
+  || ! bash "$migration_script" info; then
+  echo "Database migration verification failed." >&2
+  rollback_jar
+  exit 1
+fi
+
+systemctl start sgcomplaint
+if ! wait_for_health; then
+  echo "Application health check failed." >&2
+  journalctl -u sgcomplaint -n 100 --no-pager || true
+  rollback_jar
+  exit 1
+fi
+
+rm -f "$incoming_jar"
+systemctl is-active --quiet sgcomplaint
+echo "DEPLOY_SUCCESS: $stamp"
