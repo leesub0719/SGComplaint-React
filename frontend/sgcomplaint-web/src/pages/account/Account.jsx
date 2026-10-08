@@ -46,7 +46,10 @@ function Signup() {
   if (stage === 'form') {
     return (
       <SignupForm
-        onComplete={(createdEmpNo) => { setEmpNo(createdEmpNo); setStage('complete'); }}
+        onComplete={(createdEmpNo) => {
+          setEmpNo(createdEmpNo);
+          setStage('complete');
+        }}
         onAgreementExpired={() => setStage('terms')}
       />
     );

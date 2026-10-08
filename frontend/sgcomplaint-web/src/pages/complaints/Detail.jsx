@@ -3,17 +3,209 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { apiDelete, apiGet, apiPut } from '../../shared/api.js';
 import SafeHtml from '../../shared/SafeHtml.jsx';
 
-const CATEGORIES = [['PRAISE', '칭찬합니다'], ['COMPLAINT', '불편합니다'], ['LOST', '분실물 문의']];
+const CATEGORIES = [
+  ['PRAISE', '칭찬합니다'],
+  ['COMPLAINT', '불편합니다'],
+  ['LOST', '분실물 문의'],
+];
 
 export default function ComplaintDetail() {
-  const { complaintNo } = useParams(); const navigate = useNavigate(); const [item, setItem] = useState(null); const [error, setError] = useState(''); const [editing, setEditing] = useState(false); const [saving, setSaving] = useState(false); const [form, setForm] = useState({ category: '', title: '', content: '' });
-  useEffect(() => { apiGet(`/complaints/view/${complaintNo}`, { redirectOnExpire: false }).then((result) => { setItem(result); setForm({ category: result.categoryCode, title: result.title, content: result.content }); }).catch((reason) => setError(reason.message)); }, [complaintNo]);
-  async function save(event) { event.preventDefault(); if (!form.title.trim() || !form.content.replace(/<[^>]*>/g, '').trim()) return setError('제목과 내용을 입력해 주세요.'); setSaving(true); try { await apiPut(`/api/mypage/inquiries/${complaintNo}`, form); window.location.reload(); } catch (reason) { setError(reason.message); } finally { setSaving(false); } }
-  async function remove() { if (!window.confirm('이 민원을 삭제하시겠습니까? 삭제 후에는 복구할 수 없습니다.')) return; try { await apiDelete(`/api/mypage/inquiries/${complaintNo}`); navigate('/complaints'); } catch (reason) { setError(reason.message); } }
-  return <main className="detail-page">{error && <p className="detail-action-message">{error}</p>}{item && <article className="detail-card"><div className="detail-labels"><span className="detail-category">{item.categoryLabel}</span><span className={`detail-status status-${item.statusCode.toLowerCase()}`}>{item.statusLabel}</span></div><h1>{item.title}</h1><dl className="detail-meta"><div><dt>민원번호</dt><dd>{item.complaintNo}</dd></div><div><dt>작성자</dt><dd>{item.maskedWriterName}</dd></div><div><dt>등록일</dt><dd>{item.registeredDateTime}</dd></div></dl>
-    <section className="detail-content"><h2>민원 내용</h2><SafeHtml className="rich-content" html={item.content} /></section>
-    <section className="detail-answer"><div className="answer-heading"><div><span>ADMIN ANSWER</span><h2>관리자 답변</h2></div>{item.answeredDateTime && <time>{item.answeredDateTime}</time>}</div>{item.answerContent ? <SafeHtml className="answer-content" html={item.answerContent} /> : <p className="answer-waiting">답변을 준비하고 있습니다.</p>}{item.answerAttachments?.length > 0 && <div className="answer-files">{item.answerAttachments.map((file) => <a key={file.downloadUrl} href={file.downloadUrl}><span>⇩</span><strong>{file.originalName}</strong><small>{file.formattedSize}</small></a>)}</div>}</section>
-    {item.attachments?.length > 0 && <section className="detail-files"><h2>첨부파일</h2>{item.attachments.map((file) => <a key={file.downloadUrl} href={file.downloadUrl}><span>⇩</span><strong>{file.originalName}</strong><small>{file.formattedSize}</small></a>)}</section>}
-    {item.canEdit && <section className="detail-owner"><div className="detail-owner-buttons"><button type="button" onClick={() => setEditing(true)}>수정</button><button type="button" className="danger" onClick={remove}>삭제</button></div>{editing && <form className="detail-edit-form" onSubmit={save}><label>분류<select value={form.category} onChange={(event) => setForm({ ...form, category: event.target.value })}>{CATEGORIES.map(([code, label]) => <option key={code} value={code}>{label}</option>)}</select></label><label>제목<input value={form.title} maxLength="100" onChange={(event) => setForm({ ...form, title: event.target.value })} required /></label><div className="detail-edit-content" contentEditable suppressContentEditableWarning dangerouslySetInnerHTML={{ __html: form.content }} onInput={(event) => setForm({ ...form, content: event.currentTarget.innerHTML })} /><div className="detail-edit-buttons"><button type="button" onClick={() => setEditing(false)}>취소</button><button type="submit" disabled={saving}>{saving ? '저장 중...' : '저장'}</button></div></form>}</section>}
-    <div className="detail-actions"><Link to="/complaints">목록으로 돌아가기</Link></div></article>}</main>;
+  const { complaintNo } = useParams();
+  const navigate = useNavigate();
+  const [item, setItem] = useState(null);
+  const [error, setError] = useState('');
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({ category: '', title: '', content: '' });
+  useEffect(() => {
+    apiGet(`/complaints/view/${complaintNo}`, { redirectOnExpire: false })
+      .then((result) => {
+        setItem(result);
+        setForm({ category: result.categoryCode, title: result.title, content: result.content });
+      })
+      .catch((reason) => setError(reason.message));
+  }, [complaintNo]);
+  async function save(event) {
+    event.preventDefault();
+    if (!form.title.trim() || !form.content.replace(/<[^>]*>/g, '').trim())
+      return setError('제목과 내용을 입력해 주세요.');
+    setSaving(true);
+    try {
+      await apiPut(`/api/mypage/inquiries/${complaintNo}`, form);
+      window.location.reload();
+    } catch (reason) {
+      setError(reason.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+  async function remove() {
+    if (!window.confirm('이 민원을 삭제하시겠습니까? 삭제 후에는 복구할 수 없습니다.')) return;
+    try {
+      await apiDelete(`/api/mypage/inquiries/${complaintNo}`);
+      navigate('/complaints');
+    } catch (reason) {
+      setError(reason.message);
+    }
+  }
+  return (
+    <main className="detail-page">
+      {error && <p className="detail-action-message">{error}</p>}
+      {item && (
+        <article className="detail-card">
+          <div className="detail-labels">
+            <span className="detail-category">{item.categoryLabel}</span>
+            <span className={`detail-status status-${item.statusCode.toLowerCase()}`}>
+              {item.statusLabel}
+            </span>
+          </div>
+          <h1>{item.title}</h1>
+          <dl className="detail-meta">
+            <div>
+              <dt>민원번호</dt>
+              <dd>{item.complaintNo}</dd>
+            </div>
+            <div>
+              <dt>작성자</dt>
+              <dd>{item.maskedWriterName}</dd>
+            </div>
+            <div>
+              <dt>등록일</dt>
+              <dd>{item.registeredDateTime}</dd>
+            </div>
+          </dl>
+          <section className="detail-content">
+            <h2>민원 내용</h2>
+            <SafeHtml
+              className="rich-content"
+              html={item.content}
+            />
+          </section>
+          <section className="detail-answer">
+            <div className="answer-heading">
+              <div>
+                <span>ADMIN ANSWER</span>
+                <h2>관리자 답변</h2>
+              </div>
+              {item.answeredDateTime && <time>{item.answeredDateTime}</time>}
+            </div>
+            {item.answerContent ? (
+              <SafeHtml
+                className="answer-content"
+                html={item.answerContent}
+              />
+            ) : (
+              <p className="answer-waiting">답변을 준비하고 있습니다.</p>
+            )}
+            {item.answerAttachments?.length > 0 && (
+              <div className="answer-files">
+                {item.answerAttachments.map((file) => (
+                  <a
+                    key={file.downloadUrl}
+                    href={file.downloadUrl}
+                  >
+                    <span>⇩</span>
+                    <strong>{file.originalName}</strong>
+                    <small>{file.formattedSize}</small>
+                  </a>
+                ))}
+              </div>
+            )}
+          </section>
+          {item.attachments?.length > 0 && (
+            <section className="detail-files">
+              <h2>첨부파일</h2>
+              {item.attachments.map((file) => (
+                <a
+                  key={file.downloadUrl}
+                  href={file.downloadUrl}
+                >
+                  <span>⇩</span>
+                  <strong>{file.originalName}</strong>
+                  <small>{file.formattedSize}</small>
+                </a>
+              ))}
+            </section>
+          )}
+          {item.canEdit && (
+            <section className="detail-owner">
+              <div className="detail-owner-buttons">
+                <button
+                  type="button"
+                  onClick={() => setEditing(true)}
+                >
+                  수정
+                </button>
+                <button
+                  type="button"
+                  className="danger"
+                  onClick={remove}
+                >
+                  삭제
+                </button>
+              </div>
+              {editing && (
+                <form
+                  className="detail-edit-form"
+                  onSubmit={save}
+                >
+                  <label>
+                    분류
+                    <select
+                      value={form.category}
+                      onChange={(event) => setForm({ ...form, category: event.target.value })}
+                    >
+                      {CATEGORIES.map(([code, label]) => (
+                        <option
+                          key={code}
+                          value={code}
+                        >
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    제목
+                    <input
+                      value={form.title}
+                      maxLength="100"
+                      onChange={(event) => setForm({ ...form, title: event.target.value })}
+                      required
+                    />
+                  </label>
+                  <div
+                    className="detail-edit-content"
+                    contentEditable
+                    suppressContentEditableWarning
+                    dangerouslySetInnerHTML={{ __html: form.content }}
+                    onInput={(event) =>
+                      setForm({ ...form, content: event.currentTarget.innerHTML })
+                    }
+                  />
+                  <div className="detail-edit-buttons">
+                    <button
+                      type="button"
+                      onClick={() => setEditing(false)}
+                    >
+                      취소
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={saving}
+                    >
+                      {saving ? '저장 중...' : '저장'}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </section>
+          )}
+          <div className="detail-actions">
+            <Link to="/complaints">목록으로 돌아가기</Link>
+          </div>
+        </article>
+      )}
+    </main>
+  );
 }

@@ -15,7 +15,9 @@ export default function useCountdown(seconds = 180, onExpire) {
   const onExpireRef = useRef(onExpire);
 
   // 콜백이 매 렌더 새로 만들어져도 타이머를 다시 켜지 않도록 ref에 담아둔다.
-  useEffect(() => { onExpireRef.current = onExpire; }, [onExpire]);
+  useEffect(() => {
+    onExpireRef.current = onExpire;
+  }, [onExpire]);
 
   const start = useCallback(() => setRemaining(seconds), [seconds]);
   const stop = useCallback(() => setRemaining(0), []);

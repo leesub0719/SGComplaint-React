@@ -18,7 +18,10 @@ export default function ProfileForm({ profile, onExpired }) {
     address: profile.address ?? '',
     addressDetail: profile.addressDetail ?? '',
   });
-  const [showPassword, setShowPassword] = useState({ newPassword: false, newPasswordConfirm: false });
+  const [showPassword, setShowPassword] = useState({
+    newPassword: false,
+    newPasswordConfirm: false,
+  });
   const [fieldErrors, setFieldErrors] = useState({});
   const [alert, setAlert] = useState(null); // {type: 'success' | 'error', message}
   const [saving, setSaving] = useState(false);
@@ -33,11 +36,11 @@ export default function ProfileForm({ profile, onExpired }) {
 
   // PhoneVerification 내부 useEffect가 매 렌더마다 재실행되지 않도록 고정한다.
   const setPhoneToken = useCallback((value) => {
-    setForm((previous) => (
+    setForm((previous) =>
       previous.phoneVerificationToken === value
         ? previous
-        : { ...previous, phoneVerificationToken: value }
-    ));
+        : { ...previous, phoneVerificationToken: value },
+    );
   }, []);
 
   function searchAddress() {
@@ -112,7 +115,9 @@ export default function ProfileForm({ profile, onExpired }) {
 
   const passwordField = (name, label, placeholder) => (
     <div className="mypage-field">
-      <label htmlFor={name}>{label} <em>선택</em></label>
+      <label htmlFor={name}>
+        {label} <em>선택</em>
+      </label>
       <div className="mypage-password-wrap">
         <input
           id={name}
@@ -143,24 +148,44 @@ export default function ProfileForm({ profile, onExpired }) {
 
       {alert && <p className={`mypage-alert ${alert.type}`}>{alert.message}</p>}
 
-      <form className="mypage-profile-form" onSubmit={submit} noValidate>
+      <form
+        className="mypage-profile-form"
+        onSubmit={submit}
+        noValidate
+      >
         <div className="mypage-field">
           <label htmlFor="profile-id">아이디</label>
-          <input id="profile-id" type="text" value={profile.empId ?? ''} readOnly />
+          <input
+            id="profile-id"
+            type="text"
+            value={profile.empId ?? ''}
+            readOnly
+          />
           <small>아이디는 변경할 수 없습니다.</small>
         </div>
 
         <div className="mypage-field">
           <label htmlFor="profile-name">이름</label>
-          <input id="profile-name" type="text" value={profile.empName ?? ''} readOnly />
+          <input
+            id="profile-name"
+            type="text"
+            value={profile.empName ?? ''}
+            readOnly
+          />
           <small>이름은 변경할 수 없습니다.</small>
         </div>
 
         {passwordField('newPassword', '새 비밀번호', '변경할 때만 영문·숫자 포함 8자 이상 입력')}
-        {passwordField('newPasswordConfirm', '새 비밀번호 확인', '새 비밀번호를 다시 입력해 주세요')}
+        {passwordField(
+          'newPasswordConfirm',
+          '새 비밀번호 확인',
+          '새 비밀번호를 다시 입력해 주세요',
+        )}
 
         <div className="mypage-field">
-          <label htmlFor="profile-email">이메일 <em className="required">필수</em></label>
+          <label htmlFor="profile-email">
+            이메일 <em className="required">필수</em>
+          </label>
           <input
             id="profile-email"
             type="email"
@@ -174,7 +199,9 @@ export default function ProfileForm({ profile, onExpired }) {
         </div>
 
         <div className="mypage-field">
-          <label htmlFor="profile-phone">연락처 <em className="required">필수</em></label>
+          <label htmlFor="profile-phone">
+            연락처 <em className="required">필수</em>
+          </label>
           <input
             id="profile-phone"
             type="tel"
@@ -195,7 +222,9 @@ export default function ProfileForm({ profile, onExpired }) {
         </div>
 
         <fieldset className="mypage-address-fieldset">
-          <legend>주소 <em>선택</em></legend>
+          <legend>
+            주소 <em>선택</em>
+          </legend>
           <div className="mypage-input-action">
             <input
               id="profile-postcode"
@@ -204,7 +233,12 @@ export default function ProfileForm({ profile, onExpired }) {
               value={form.postcode}
               readOnly
             />
-            <button type="button" onClick={searchAddress}>주소 검색</button>
+            <button
+              type="button"
+              onClick={searchAddress}
+            >
+              주소 검색
+            </button>
           </div>
           <input
             id="profile-address"
@@ -222,14 +256,25 @@ export default function ProfileForm({ profile, onExpired }) {
             value={form.addressDetail}
             onChange={(event) => update('addressDetail', event.target.value)}
           />
-          {fieldErrors.addressDetail && <p className="mypage-field-error">{fieldErrors.addressDetail}</p>}
+          {fieldErrors.addressDetail && (
+            <p className="mypage-field-error">{fieldErrors.addressDetail}</p>
+          )}
         </fieldset>
 
         <div className="mypage-form-actions profile-actions">
-          <button className="mypage-primary-button" type="submit" disabled={saving}>
+          <button
+            className="mypage-primary-button"
+            type="submit"
+            disabled={saving}
+          >
             {saving ? '저장 중…' : '저장'}
           </button>
-          <a className="mypage-secondary-button" href="/app/">취소</a>
+          <a
+            className="mypage-secondary-button"
+            href="/app/"
+          >
+            취소
+          </a>
         </div>
       </form>
 
@@ -238,7 +283,12 @@ export default function ProfileForm({ profile, onExpired }) {
           <strong>회원탈퇴</strong>
           <span>탈퇴 후에는 로그인할 수 없으며 기존 문의 기록은 보존됩니다.</span>
         </div>
-        <button type="button" onClick={withdraw}>회원탈퇴</button>
+        <button
+          type="button"
+          onClick={withdraw}
+        >
+          회원탈퇴
+        </button>
       </div>
     </section>
   );

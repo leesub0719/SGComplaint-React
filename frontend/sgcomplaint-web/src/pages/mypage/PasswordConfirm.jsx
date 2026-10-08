@@ -21,9 +21,10 @@ export default function PasswordConfirm({ empId, onVerified }) {
       await apiPost('/api/mypage/profile/confirm-password', { currentPassword });
       onVerified();
     } catch (exception) {
-      const message = exception instanceof ApiError
-        ? (exception.fieldErrors.currentPassword || exception.message)
-        : '요청을 처리하지 못했습니다.';
+      const message =
+        exception instanceof ApiError
+          ? exception.fieldErrors.currentPassword || exception.message
+          : '요청을 처리하지 못했습니다.';
       setError(message);
       setCurrentPassword('');
     } finally {
@@ -39,9 +40,18 @@ export default function PasswordConfirm({ empId, onVerified }) {
         <p>회원님의 개인정보를 안전하게 보호하기 위해 비밀번호를 한 번 더 확인합니다.</p>
       </div>
 
-      <form className="password-confirm-form" onSubmit={submit} noValidate>
+      <form
+        className="password-confirm-form"
+        onSubmit={submit}
+        noValidate
+      >
         <label htmlFor="confirm-member-id">아이디</label>
-        <input id="confirm-member-id" type="text" value={empId ?? ''} readOnly />
+        <input
+          id="confirm-member-id"
+          type="text"
+          value={empId ?? ''}
+          readOnly
+        />
 
         <label htmlFor="current-password">현재 비밀번호</label>
         <input
@@ -56,10 +66,19 @@ export default function PasswordConfirm({ empId, onVerified }) {
         {error && <p className="mypage-field-error">{error}</p>}
 
         <div className="mypage-form-actions">
-          <button className="mypage-primary-button" type="submit" disabled={submitting}>
+          <button
+            className="mypage-primary-button"
+            type="submit"
+            disabled={submitting}
+          >
             {submitting ? '확인 중…' : '확인'}
           </button>
-          <a className="mypage-secondary-button" href="/app/">취소</a>
+          <a
+            className="mypage-secondary-button"
+            href="/app/"
+          >
+            취소
+          </a>
         </div>
       </form>
     </section>

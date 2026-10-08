@@ -7,9 +7,18 @@ export default function SubHero({ pathname }) {
   if (!hero) return null;
 
   return (
-    <section className="subpage-hero" aria-label={`${hero.title} 페이지 상단 이미지`}>
-      <img src={hero.image} alt="노란 버스와 시민이 함께 있는 거리 풍경" />
-      <div className="subpage-hero-shade" aria-hidden="true" />
+    <section
+      className="subpage-hero"
+      aria-label={`${hero.title} 페이지 상단 이미지`}
+    >
+      <img
+        src={hero.image}
+        alt="노란 버스와 시민이 함께 있는 거리 풍경"
+      />
+      <div
+        className="subpage-hero-shade"
+        aria-hidden="true"
+      />
       <div className="subpage-hero-copy">
         <h1>{hero.title}</h1>
       </div>
@@ -55,16 +64,20 @@ function resolve(pathname, category) {
     return { image: '/app/images/subpages/recruit-notices-hero.png', title: '채용공고' };
   }
   if (pathname.startsWith('/complaints/new')) {
-    return CATEGORY_HERO[category] ?? {
-      image: '/app/images/subpages/complaint-write-hero.png',
-      title: '민원 접수',
-    };
+    return (
+      CATEGORY_HERO[category] ?? {
+        image: '/app/images/subpages/complaint-write-hero.png',
+        title: '민원 접수',
+      }
+    );
   }
   if (pathname.startsWith('/complaints')) {
-    return CATEGORY_HERO[category] ?? {
-      image: '/app/images/subpages/complaints-all-hero.png',
-      title: '고객의 소리',
-    };
+    return (
+      CATEGORY_HERO[category] ?? {
+        image: '/app/images/subpages/complaints-all-hero.png',
+        title: '고객의 소리',
+      }
+    );
   }
   if (pathname.startsWith('/mypage')) {
     return { image: '/app/images/subpages/signup-hero.png', title: '마이페이지' };

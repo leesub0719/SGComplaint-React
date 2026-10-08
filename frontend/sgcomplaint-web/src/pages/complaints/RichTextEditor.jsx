@@ -58,14 +58,23 @@ export default function RichTextEditor({ onChange, invalid, initialContent = '' 
 
   return (
     <div className={invalid ? 'editor-shell invalid' : 'editor-shell'}>
-      <div className="editor-toolbar" role="toolbar" aria-label="본문 서식 도구">
+      <div
+        className="editor-toolbar"
+        role="toolbar"
+        aria-label="본문 서식 도구"
+      >
         <select
           aria-label="글꼴"
           onMouseDown={(event) => event.stopPropagation()}
           onChange={(event) => editor.chain().focus().setFontFamily(event.target.value).run()}
         >
           {FONT_FAMILIES.map((font) => (
-            <option key={font.value} value={font.value}>{font.label}</option>
+            <option
+              key={font.value}
+              value={font.value}
+            >
+              {font.label}
+            </option>
           ))}
         </select>
 
@@ -75,25 +84,56 @@ export default function RichTextEditor({ onChange, invalid, initialContent = '' 
           onChange={(event) => editor.chain().focus().setFontSize(event.target.value).run()}
         >
           {FONT_SIZES.map((size) => (
-            <option key={size.value} value={size.value}>{size.label}</option>
+            <option
+              key={size.value}
+              value={size.value}
+            >
+              {size.label}
+            </option>
           ))}
         </select>
 
-        <span className="toolbar-divider" aria-hidden="true" />
+        <span
+          className="toolbar-divider"
+          aria-hidden="true"
+        />
 
-        {toolbarButton(<strong>B</strong>, '굵게',
-          () => editor.chain().focus().toggleBold().run(), 'bold')}
-        {toolbarButton(<em>I</em>, '기울임',
-          () => editor.chain().focus().toggleItalic().run(), 'italic')}
-        {toolbarButton(<u>U</u>, '밑줄',
-          () => editor.chain().focus().toggleUnderline().run(), 'underline')}
+        {toolbarButton(
+          <strong>B</strong>,
+          '굵게',
+          () => editor.chain().focus().toggleBold().run(),
+          'bold',
+        )}
+        {toolbarButton(
+          <em>I</em>,
+          '기울임',
+          () => editor.chain().focus().toggleItalic().run(),
+          'italic',
+        )}
+        {toolbarButton(
+          <u>U</u>,
+          '밑줄',
+          () => editor.chain().focus().toggleUnderline().run(),
+          'underline',
+        )}
 
-        <span className="toolbar-divider" aria-hidden="true" />
+        <span
+          className="toolbar-divider"
+          aria-hidden="true"
+        />
 
-        {toolbarButton('• 목록', '글머리 목록',
-          () => editor.chain().focus().toggleBulletList().run(), 'bulletList')}
-        {toolbarButton('1. 목록', '번호 목록',
-          () => editor.chain().focus().toggleOrderedList().run(), 'orderedList')}
+        {toolbarButton(
+          '• 목록',
+          '글머리 목록',
+          () => editor.chain().focus().toggleBulletList().run(),
+          'bulletList',
+        )}
+        {toolbarButton(
+          '1. 목록',
+          '번호 목록',
+          () => editor.chain().focus().toggleOrderedList().run(),
+          'orderedList',
+        )}
 
         <button
           type="button"

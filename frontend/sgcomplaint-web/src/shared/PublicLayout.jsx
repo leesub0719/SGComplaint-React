@@ -57,8 +57,17 @@ export default function PublicLayout() {
     <>
       <header className="public-site-header">
         <div className="public-page-width public-header-inner">
-          <Link className="public-brand" to="/" aria-label="(주) 서경 마을버스 홈">
-            <span className="public-brand-symbol" aria-hidden="true">013</span>
+          <Link
+            className="public-brand"
+            to="/"
+            aria-label="(주) 서경 마을버스 홈"
+          >
+            <span
+              className="public-brand-symbol"
+              aria-hidden="true"
+            >
+              013
+            </span>
             <span>(주) 서경 마을버스</span>
           </Link>
 
@@ -70,7 +79,9 @@ export default function PublicLayout() {
             onClick={() => setNavOpen(!navOpen)}
           >
             <span className="public-sr-only">메뉴 열기</span>
-            <span /><span /><span />
+            <span />
+            <span />
+            <span />
           </button>
 
           <nav
@@ -80,39 +91,58 @@ export default function PublicLayout() {
             aria-label="주요 메뉴"
           >
             <div className="public-primary-menu">
-              {group('company', '회사소개', (
+              {group(
+                'company',
+                '회사소개',
                 <>
                   <Link to="/company/greeting">인사말</Link>
                   <Link to="/company/history">회사연혁</Link>
                   <Link to="/company/location">오시는길</Link>
                   <Link to="/company/organization">조직도</Link>
-                </>
-              ))}
-              {group('route', '노선운행안내', (
+                </>,
+              )}
+              {group(
+                'route',
+                '노선운행안내',
                 <>
                   <Link to="/route/village-bus">마을버스</Link>
                   <Link to="/route/ddokbus">똑버스</Link>
-                </>
-              ))}
+                </>,
+              )}
               {group('recruit', '채용안내', <Link to="/recruit/notices">채용공고</Link>)}
-              {group('customer', '고객센터', (
+              {group(
+                'customer',
+                '고객센터',
                 <>
                   <Link to="/notices">공지사항</Link>
                   <Link to="/complaints?category=PRAISE">칭찬합니다</Link>
                   <Link to="/complaints?category=COMPLAINT">불편합니다</Link>
                   <Link to="/complaints?category=LOST">분실물 문의</Link>
-                </>
-              ))}
+                </>,
+              )}
             </div>
 
-            <span className="public-auth-divider" aria-hidden="true" />
+            <span
+              className="public-auth-divider"
+              aria-hidden="true"
+            />
 
             {/* 로그인 상태를 확인하기 전에는 어느 쪽도 그리지 않는다.
                 버튼이 나타났다 바뀌는 깜빡임을 막기 위해서다. */}
             {member && !member.loggedIn && (
               <span className="public-auth-actions">
-                <Link className="public-auth-button public-auth-login" to="/login">로그인</Link>
-                <Link className="public-auth-button public-auth-signup" to="/account/signup">회원가입</Link>
+                <Link
+                  className="public-auth-button public-auth-login"
+                  to="/login"
+                >
+                  로그인
+                </Link>
+                <Link
+                  className="public-auth-button public-auth-signup"
+                  to="/account/signup"
+                >
+                  회원가입
+                </Link>
               </span>
             )}
 
@@ -121,9 +151,18 @@ export default function PublicLayout() {
                 <span className="public-login-greeting">
                   <strong>{member.memberName}</strong>님
                 </span>
-                <span className="public-member-divider" aria-hidden="true" />
+                <span
+                  className="public-member-divider"
+                  aria-hidden="true"
+                />
 
-                <div className={openMenu === 'member' ? 'public-nav-group public-member-menu open' : 'public-nav-group public-member-menu'}>
+                <div
+                  className={
+                    openMenu === 'member'
+                      ? 'public-nav-group public-member-menu open'
+                      : 'public-nav-group public-member-menu'
+                  }
+                >
                   <button
                     className="public-member-link public-member-menu-button"
                     type="button"
@@ -140,15 +179,28 @@ export default function PublicLayout() {
 
                 {member.admin && (
                   <>
-                    <span className="public-member-divider" aria-hidden="true" />
-                    <Link className="public-member-link public-admin-return-link" to="/admin/dashboard">
+                    <span
+                      className="public-member-divider"
+                      aria-hidden="true"
+                    />
+                    <Link
+                      className="public-member-link public-admin-return-link"
+                      to="/admin/dashboard"
+                    >
                       관리자페이지
                     </Link>
                   </>
                 )}
 
-                <span className="public-member-divider" aria-hidden="true" />
-                <button className="public-member-link public-auth-logout" type="button" onClick={() => logout()}>
+                <span
+                  className="public-member-divider"
+                  aria-hidden="true"
+                />
+                <button
+                  className="public-member-link public-auth-logout"
+                  type="button"
+                  onClick={() => logout()}
+                >
                   로그아웃
                 </button>
               </span>
@@ -163,9 +215,20 @@ export default function PublicLayout() {
 
       <footer className="public-company-footer">
         <div className="public-page-width public-company-footer-inner">
-          <div className="public-footer-brand" aria-label="(주)서경 마을버스">
-            <span className="public-footer-brand-mark" aria-hidden="true">013</span>
-            <span><strong>SEOKYOUNG</strong><b>(주)서경 마을버스</b></span>
+          <div
+            className="public-footer-brand"
+            aria-label="(주)서경 마을버스"
+          >
+            <span
+              className="public-footer-brand-mark"
+              aria-hidden="true"
+            >
+              013
+            </span>
+            <span>
+              <strong>SEOKYOUNG</strong>
+              <b>(주)서경 마을버스</b>
+            </span>
           </div>
           <address className="public-footer-company-information">
             <strong>(주)서경 마을버스</strong>
@@ -174,7 +237,9 @@ export default function PublicLayout() {
               <span aria-hidden="true"> / </span>
               <span>Fax. 032 347 0134</span>
             </p>
-            <p><a href="mailto:seokyoung_j@naver.com">이메일. seokyoung_j@naver.com</a></p>
+            <p>
+              <a href="mailto:seokyoung_j@naver.com">이메일. seokyoung_j@naver.com</a>
+            </p>
             <p>주소 : 경기도 부천시 괴안동 246번지 / 소사동로 197 (주)서경 마을버스</p>
           </address>
           <button
@@ -183,7 +248,12 @@ export default function PublicLayout() {
             aria-label="페이지 맨 위로 이동"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 11 6-6 6 6M12 5v14" /></svg>
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path d="m6 11 6-6 6 6M12 5v14" />
+            </svg>
           </button>
         </div>
       </footer>

@@ -34,7 +34,10 @@ export default function PhoneVerification({
 
   const expire = useCallback(() => {
     onTokenChange('');
-    setCodeMessage({ text: '인증시간이 만료되었습니다. 인증번호를 다시 요청해 주세요.', ok: false });
+    setCodeMessage({
+      text: '인증시간이 만료되었습니다. 인증번호를 다시 요청해 주세요.',
+      ok: false,
+    });
   }, [onTokenChange]);
 
   const timer = useCountdown(180, expire);
@@ -46,9 +49,11 @@ export default function PhoneVerification({
     setCode('');
     timer.stop();
     setCodeMessage({ text: '', ok: false });
-    setPhoneMessage(unchanged
-      ? { text: '현재 등록된 연락처입니다.', ok: true }
-      : { text: '연락처를 변경하려면 휴대전화 인증이 필요합니다.', ok: false });
+    setPhoneMessage(
+      unchanged
+        ? { text: '현재 등록된 연락처입니다.', ok: true }
+        : { text: '연락처를 변경하려면 휴대전화 인증이 필요합니다.', ok: false },
+    );
     // timer.stop은 useCallback으로 고정돼 있어 의존성에 넣어도 안전하다.
   }, [phone, originalPhone, unchanged, onTokenChange, timer.stop]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -117,7 +122,11 @@ export default function PhoneVerification({
       )}
 
       <div className="field-inline">
-        <button type="button" onClick={requestCode} disabled={requesting || unchanged}>
+        <button
+          type="button"
+          onClick={requestCode}
+          disabled={requesting || unchanged}
+        >
           {requesting ? '발송 중…' : '인증번호 요청'}
         </button>
       </div>
@@ -143,7 +152,11 @@ export default function PhoneVerification({
               />
               <span className="timer">{formatTimer(timer.remaining)}</span>
             </div>
-            <button type="button" onClick={verifyCode} disabled={verifying || verified}>
+            <button
+              type="button"
+              onClick={verifyCode}
+              disabled={verifying || verified}
+            >
               {verified ? '인증완료' : '인증확인'}
             </button>
           </div>

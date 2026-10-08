@@ -17,8 +17,12 @@ export default function ComplaintRow({ item, onOpen }) {
         </span>
       </td>
       <td className="title-cell">
-        <button type="button" onClick={() => onOpen(item)}>
-          {item.passwordProtected && <span className="lock-icon">🔒</span>} <span>{item.title}</span>
+        <button
+          type="button"
+          onClick={() => onOpen(item)}
+        >
+          {item.passwordProtected && <span className="lock-icon">🔒</span>}{' '}
+          <span>{item.title}</span>
         </button>
       </td>
       <td>{item.maskedWriterName}</td>

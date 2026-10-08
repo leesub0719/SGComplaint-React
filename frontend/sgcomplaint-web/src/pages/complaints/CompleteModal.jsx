@@ -22,10 +22,17 @@ export default function CompleteModal({ complaintNo, onConfirm }) {
         aria-modal="true"
         aria-labelledby="complete-title"
       >
-        <div className="complete-icon" aria-hidden="true">✓</div>
+        <div
+          className="complete-icon"
+          aria-hidden="true"
+        >
+          ✓
+        </div>
         <h2 id="complete-title">민원 접수 완료</h2>
         <p>민원이 정상적으로 접수되었습니다.</p>
-        <p className="receipt-number">접수번호 <strong>{complaintNo}</strong></p>
+        <p className="receipt-number">
+          접수번호 <strong>{complaintNo}</strong>
+        </p>
         <button
           ref={confirmRef}
           type="button"

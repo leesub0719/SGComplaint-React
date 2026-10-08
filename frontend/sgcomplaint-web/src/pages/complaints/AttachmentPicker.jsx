@@ -30,7 +30,10 @@ export default function AttachmentPicker({ files, onChange, message, onMessage }
     <div className="form-field">
       <label htmlFor="complaint-files">첨부파일</label>
 
-      <label className="file-drop" htmlFor="complaint-files">
+      <label
+        className="file-drop"
+        htmlFor="complaint-files"
+      >
         <strong>파일 선택</strong>
         <span>사진이나 문서를 최대 {MAX_FILES}개까지 첨부할 수 있습니다.</span>
       </label>
@@ -47,13 +50,22 @@ export default function AttachmentPicker({ files, onChange, message, onMessage }
       <div className="file-list-heading">
         <span>첨부파일 {files.length}개</span>
         {files.length > 0 && (
-          <button type="button" onClick={() => { onChange([]); onMessage(''); }}>
+          <button
+            type="button"
+            onClick={() => {
+              onChange([]);
+              onMessage('');
+            }}
+          >
             전체 취소
           </button>
         )}
       </div>
 
-      <ul className="file-list" aria-live="polite">
+      <ul
+        className="file-list"
+        aria-live="polite"
+      >
         {files.map((file, index) => (
           <li key={`${file.name}-${file.lastModified}`}>
             <div className="file-information">
@@ -72,7 +84,14 @@ export default function AttachmentPicker({ files, onChange, message, onMessage }
         ))}
       </ul>
 
-      {message && <p className="field-message error" aria-live="polite">{message}</p>}
+      {message && (
+        <p
+          className="field-message error"
+          aria-live="polite"
+        >
+          {message}
+        </p>
+      )}
     </div>
   );
 }

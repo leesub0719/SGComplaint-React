@@ -28,37 +28,128 @@ export default function App() {
     <BrowserRouter basename="/app">
       <Routes>
         <Route element={<PublicLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/complaints" element={<ComplaintList />} />
-          <Route path="/complaints/new" element={<ComplaintNew />} />
-          <Route path="/complaints/:complaintNo" element={<ComplaintDetail />} />
-          <Route path="/notices" element={<NoticeList />} />
-          <Route path="/notices/:noticeNo" element={<NoticeDetail />} />
-          <Route path="/company/greeting" element={<Greeting />} />
-          <Route path="/company/:section" element={<ComingSoon title="회사소개" />} />
-          <Route path="/route/:type" element={<RouteList />} />
-          <Route path="/recruit/notices" element={<ComingSoon title="채용공고" />} />
-          <Route path="/mypage" element={<MyPage />} />
-          <Route path="/mypage/inquiries" element={<MyInquiries />} />
-          <Route path="/account/:tab" element={<Account />} />
-          <Route path="/account" element={<Navigate to="/account/signup" replace />} />
+          <Route
+            path="/"
+            element={<Home />}
+          />
+          <Route
+            path="/login"
+            element={<Login />}
+          />
+          <Route
+            path="/complaints"
+            element={<ComplaintList />}
+          />
+          <Route
+            path="/complaints/new"
+            element={<ComplaintNew />}
+          />
+          <Route
+            path="/complaints/:complaintNo"
+            element={<ComplaintDetail />}
+          />
+          <Route
+            path="/notices"
+            element={<NoticeList />}
+          />
+          <Route
+            path="/notices/:noticeNo"
+            element={<NoticeDetail />}
+          />
+          <Route
+            path="/company/greeting"
+            element={<Greeting />}
+          />
+          <Route
+            path="/company/:section"
+            element={<ComingSoon title="회사소개" />}
+          />
+          <Route
+            path="/route/:type"
+            element={<RouteList />}
+          />
+          <Route
+            path="/recruit/notices"
+            element={<ComingSoon title="채용공고" />}
+          />
+          <Route
+            path="/mypage"
+            element={<MyPage />}
+          />
+          <Route
+            path="/mypage/inquiries"
+            element={<MyInquiries />}
+          />
+          <Route
+            path="/account/:tab"
+            element={<Account />}
+          />
+          <Route
+            path="/account"
+            element={
+              <Navigate
+                to="/account/signup"
+                replace
+              />
+            }
+          />
         </Route>
 
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<Navigate to="/admin/dashboard" replace />} />
-          <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="complaints" element={<AdminComplaints />} />
-          <Route path="members" element={<AdminMembers />} />
-          <Route path="notices" element={<AdminNotices />} />
-          <Route path="notices/new" element={<AdminNotices />} />
-          <Route path="notices/:noticeNo/edit" element={<AdminNotices />} />
-          <Route path="routes" element={<AdminRoutes />} />
-          <Route path="partners" element={<AdminPartners />} />
-          <Route path="main-page" element={<AdminMainPage />} />
+        <Route
+          path="/admin"
+          element={<AdminLayout />}
+        >
+          <Route
+            index
+            element={
+              <Navigate
+                to="/admin/dashboard"
+                replace
+              />
+            }
+          />
+          <Route
+            path="dashboard"
+            element={<AdminDashboard />}
+          />
+          <Route
+            path="complaints"
+            element={<AdminComplaints />}
+          />
+          <Route
+            path="members"
+            element={<AdminMembers />}
+          />
+          <Route
+            path="notices"
+            element={<AdminNotices />}
+          />
+          <Route
+            path="notices/new"
+            element={<AdminNotices />}
+          />
+          <Route
+            path="notices/:noticeNo/edit"
+            element={<AdminNotices />}
+          />
+          <Route
+            path="routes"
+            element={<AdminRoutes />}
+          />
+          <Route
+            path="partners"
+            element={<AdminPartners />}
+          />
+          <Route
+            path="main-page"
+            element={<AdminMainPage />}
+          />
         </Route>
 
-        <Route path="*" element={<p className="message">존재하지 않는 페이지입니다.</p>} />
+        <Route
+          path="*"
+          element={<p className="message">존재하지 않는 페이지입니다.</p>}
+        />
       </Routes>
     </BrowserRouter>
   );

@@ -7,11 +7,21 @@ export default function Pagination({ page }) {
 
   return (
     <div className="pagination">
-      <button type="button" disabled={page.first} onClick={() => page.onChange(page.page - 1)}>
+      <button
+        type="button"
+        disabled={page.first}
+        onClick={() => page.onChange(page.page - 1)}
+      >
         이전
       </button>
-      <span>{page.page + 1} / {page.totalPages}</span>
-      <button type="button" disabled={page.last} onClick={() => page.onChange(page.page + 1)}>
+      <span>
+        {page.page + 1} / {page.totalPages}
+      </span>
+      <button
+        type="button"
+        disabled={page.last}
+        onClick={() => page.onChange(page.page + 1)}
+      >
         다음
       </button>
     </div>

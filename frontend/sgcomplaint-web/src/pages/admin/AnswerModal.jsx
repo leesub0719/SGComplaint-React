@@ -24,7 +24,9 @@ export default function AnswerModal({ complaint, statuses, onClose, onSaved }) {
     dialogRef.current?.focus();
     document.body.classList.add('modal-open');
 
-    const onKeyDown = (event) => { if (event.key === 'Escape') onClose(); };
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') onClose();
+    };
     window.addEventListener('keydown', onKeyDown);
 
     return () => {
@@ -57,9 +59,11 @@ export default function AnswerModal({ complaint, statuses, onClose, onSaved }) {
       const result = await postFormData(`/api/admin/complaints/${complaint.complaintNo}`, formData);
       onSaved(result.message);
     } catch (exception) {
-      setError(exception.status === 409
-        ? '다른 관리자가 먼저 수정했습니다. 창을 닫고 최신 목록을 다시 확인해 주세요.'
-        : exception.message);
+      setError(
+        exception.status === 409
+          ? '다른 관리자가 먼저 수정했습니다. 창을 닫고 최신 목록을 다시 확인해 주세요.'
+          : exception.message,
+      );
     } finally {
       setSaving(false);
     }
@@ -67,7 +71,10 @@ export default function AnswerModal({ complaint, statuses, onClose, onSaved }) {
 
   return (
     <div className="modal">
-      <div className="modal-backdrop" onClick={onClose} />
+      <div
+        className="modal-backdrop"
+        onClick={onClose}
+      />
       <section
         className="modal-dialog"
         role="dialog"
@@ -78,15 +85,35 @@ export default function AnswerModal({ complaint, statuses, onClose, onSaved }) {
       >
         <header className="modal-header">
           <h2 id="answer-modal-title">민원 답변 · #{complaint.complaintNo}</h2>
-          <button type="button" onClick={onClose} aria-label="닫기">✕</button>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="닫기"
+          >
+            ✕
+          </button>
         </header>
 
         <div className="modal-body">
           <dl className="complaint-meta">
-            <div><dt>분sdsd류</dt><dd>{complaint.categoryLabel}</dd></div>
-            <div><dt>작성자</dt><dd>{complaint.memberName} ({complaint.memberId})</dd></div>
-            <div><dt>연락처</dt><dd>{complaint.memberPhone}</dd></div>
-            <div><dt>등록일시</dt><dd>{complaint.registeredDateTime}</dd></div>
+            <div>
+              <dt>분sdsd류</dt>
+              <dd>{complaint.categoryLabel}</dd>
+            </div>
+            <div>
+              <dt>작성자</dt>
+              <dd>
+                {complaint.memberName} ({complaint.memberId})
+              </dd>
+            </div>
+            <div>
+              <dt>연락처</dt>
+              <dd>{complaint.memberPhone}</dd>
+            </div>
+            <div>
+              <dt>등록일시</dt>
+              <dd>{complaint.registeredDateTime}</dd>
+            </div>
           </dl>
 
           <h3>{complaint.title}</h3>
@@ -100,7 +127,10 @@ export default function AnswerModal({ complaint, statuses, onClose, onSaved }) {
             <div className="attachments">
               <h4>첨부파일</h4>
               {complaint.complaintAttachments.map((file) => (
-                <a key={file.attachmentNo} href={file.downloadUrl}>
+                <a
+                  key={file.attachmentNo}
+                  href={file.downloadUrl}
+                >
                   {file.originalName} <small>{file.formattedSize}</small>
                 </a>
               ))}
@@ -116,7 +146,12 @@ export default function AnswerModal({ complaint, statuses, onClose, onSaved }) {
                 onChange={(event) => setStatus(event.target.value)}
               >
                 {statuses.map((item) => (
-                  <option key={item.code} value={item.code}>{item.label}</option>
+                  <option
+                    key={item.code}
+                    value={item.code}
+                  >
+                    {item.label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -146,8 +181,18 @@ export default function AnswerModal({ complaint, statuses, onClose, onSaved }) {
             {error && <p className="field-error">{error}</p>}
 
             <div className="modal-actions">
-              <button type="button" className="secondary" onClick={onClose}>취소</button>
-              <button type="submit" className="primary" disabled={saving}>
+              <button
+                type="button"
+                className="secondary"
+                onClick={onClose}
+              >
+                취소
+              </button>
+              <button
+                type="submit"
+                className="primary"
+                disabled={saving}
+              >
                 {saving ? '저장 중…' : '저장'}
               </button>
             </div>

@@ -41,9 +41,10 @@ export default function ComplaintNew() {
       next.postPassword = '게시글 비밀번호는 4~20자로 입력해 주세요.';
     }
     if (!contentValid) {
-      next.content = content.length === 0
-        ? '내용을 입력해 주세요.'
-        : `내용은 ${CONTENT_MAX}자 이내로 입력해 주세요.`;
+      next.content =
+        content.length === 0
+          ? '내용을 입력해 주세요.'
+          : `내용은 ${CONTENT_MAX}자 이내로 입력해 주세요.`;
     }
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -79,7 +80,9 @@ export default function ComplaintNew() {
     } catch (exception) {
       setFormMessage(exception.message);
       if (exception instanceof ApiError && exception.status === 401) {
-        window.setTimeout(() => { window.location.href = '/login'; }, 1500);
+        window.setTimeout(() => {
+          window.location.href = '/login';
+        }, 1500);
       }
     } finally {
       setSubmitting(false);
@@ -101,13 +104,20 @@ export default function ComplaintNew() {
               <span className="step">STEP 01</span>
               <h2>민원 내용 작성</h2>
             </div>
-            <p><em>*</em> 표시는 필수 입력 항목입니다.</p>
+            <p>
+              <em>*</em> 표시는 필수 입력 항목입니다.
+            </p>
           </div>
 
-          <form onSubmit={submit} noValidate>
+          <form
+            onSubmit={submit}
+            noValidate
+          >
             <div className="category-password-row">
               <div className="form-field">
-                <label htmlFor="complaint-category">분류 <em>*</em></label>
+                <label htmlFor="complaint-category">
+                  분류 <em>*</em>
+                </label>
                 <select
                   id="complaint-category"
                   value={category}
@@ -118,7 +128,12 @@ export default function ComplaintNew() {
                   }}
                 >
                   {CATEGORY_CODES.map((code) => (
-                    <option key={code} value={code}>{CATEGORIES[code].label}</option>
+                    <option
+                      key={code}
+                      value={code}
+                    >
+                      {CATEGORIES[code].label}
+                    </option>
                   ))}
                 </select>
                 <p className="field-help">접수하려는 내용과 가장 가까운 분류를 선택해 주세요.</p>
@@ -126,7 +141,9 @@ export default function ComplaintNew() {
               </div>
 
               <div className="form-field">
-                <label htmlFor="post-password">게시글 비밀번호 <em>*</em></label>
+                <label htmlFor="post-password">
+                  게시글 비밀번호 <em>*</em>
+                </label>
                 <input
                   id="post-password"
                   type="password"
@@ -138,14 +155,20 @@ export default function ComplaintNew() {
                   onChange={(event) => setPostPassword(event.target.value)}
                 />
                 <p className="field-help">게시글을 열람할 때 사용하는 비밀번호입니다.</p>
-                {errors.postPassword && <p className="field-message error">{errors.postPassword}</p>}
+                {errors.postPassword && (
+                  <p className="field-message error">{errors.postPassword}</p>
+                )}
               </div>
             </div>
 
             <div className="form-field">
               <div className="label-row">
-                <label htmlFor="complaint-title">제목 <em>*</em></label>
-                <span><strong>{title.length}</strong>/{TITLE_MAX}</span>
+                <label htmlFor="complaint-title">
+                  제목 <em>*</em>
+                </label>
+                <span>
+                  <strong>{title.length}</strong>/{TITLE_MAX}
+                </span>
               </div>
               <input
                 id="complaint-title"
@@ -160,10 +183,10 @@ export default function ComplaintNew() {
 
             <div className="form-field">
               <div className="label-row">
-                <label>내용 <em>*</em></label>
-                <span
-                  className={content.length > CONTENT_MAX ? 'over-limit' : ''}
-                >
+                <label>
+                  내용 <em>*</em>
+                </label>
+                <span className={content.length > CONTENT_MAX ? 'over-limit' : ''}>
                   <strong>{content.length}</strong>/{CONTENT_MAX}
                 </span>
               </div>
@@ -174,7 +197,9 @@ export default function ComplaintNew() {
                   setErrors((previous) => ({ ...previous, content: undefined }));
                 }}
               />
-              <p className="field-help">개인정보나 주민등록번호 등 민감한 정보는 작성하지 마세요.</p>
+              <p className="field-help">
+                개인정보나 주민등록번호 등 민감한 정보는 작성하지 마세요.
+              </p>
               {errors.content && <p className="field-message error">{errors.content}</p>}
             </div>
 
@@ -185,11 +210,27 @@ export default function ComplaintNew() {
               onMessage={setFileMessage}
             />
 
-            {formMessage && <p className="form-message" aria-live="polite">{formMessage}</p>}
+            {formMessage && (
+              <p
+                className="form-message"
+                aria-live="polite"
+              >
+                {formMessage}
+              </p>
+            )}
 
             <div className="form-actions">
-              <Link className="button button-cancel" to="/">취소</Link>
-              <button className="button button-submit" type="submit" disabled={submitting}>
+              <Link
+                className="button button-cancel"
+                to="/"
+              >
+                취소
+              </Link>
+              <button
+                className="button button-submit"
+                type="submit"
+                disabled={submitting}
+              >
                 {submitting ? '접수 중...' : '접수하기'}
               </button>
             </div>

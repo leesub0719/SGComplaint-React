@@ -21,14 +21,127 @@ export default function AdminLayout() {
     : pathname.endsWith('/edit')
       ? ['공지사항 수정', '등록된 공지사항의 내용과 게시 설정을 수정합니다.']
       : null;
-  const [title, description] = noticeFormMeta || PAGE_META[pathname] || PAGE_META['/admin/dashboard'];
-  useEffect(() => { apiGet('/api/layout/me').then(setMember); }, []);
-  useEffect(() => { setSidebarOpen(false); }, [pathname]);
+  const [title, description] =
+    noticeFormMeta || PAGE_META[pathname] || PAGE_META['/admin/dashboard'];
+  useEffect(() => {
+    apiGet('/api/layout/me').then(setMember);
+  }, []);
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
   const navClass = ({ isActive }) => (isActive ? 'active' : undefined);
-  return <div className="admin-shell"><aside className={sidebarOpen ? 'admin-sidebar open' : 'admin-sidebar'}>
-    <Link className="admin-brand" to="/admin/dashboard"><span className="brand-icon" aria-hidden="true">013</span><span><strong>(주) 서경 마을버스</strong><small>민원 관리 시스템</small></span></Link>
-    <nav className="admin-nav" aria-label="관리자 메뉴"><p>WORKSPACE</p><NavLink className={navClass} to="/admin/dashboard"><span>▦</span> 대시보드</NavLink><NavLink className={navClass} to="/admin/main-page"><span>▧</span> 메인페이지 관리</NavLink><NavLink className={navClass} to="/admin/complaints"><span>▤</span> 민원 관리</NavLink><NavLink className={navClass} to="/admin/notices"><span>◫</span> 공지사항</NavLink><NavLink className={navClass} to="/admin/routes"><span>↝</span> 운행안내 추가</NavLink><NavLink className={navClass} to="/admin/members"><span>♙</span> 회원 관리</NavLink>{member?.master && <NavLink className={navClass} to="/admin/partners"><span>♧</span> 협력업체</NavLink>}</nav>
-    <div className="sidebar-bottom"><Link to="/">사용자 메인으로</Link><button type="button" onClick={() => logout()}>로그아웃</button></div></aside>
-    <div className="admin-workspace"><header className="admin-topbar"><button className="sidebar-toggle" type="button" aria-label="관리자 메뉴 열기" aria-expanded={sidebarOpen} onClick={() => setSidebarOpen((open) => !open)}>☰</button><div><h1>{title}</h1><p>{description}</p></div><div className="admin-profile"><span className="profile-avatar">{member?.master ? 'M' : 'A'}</span><span><strong>{member?.memberName || '관리자'}</strong><small>{member?.roleLabel || 'Administrator'}</small></span></div></header><main className="admin-content"><Outlet context={{ member }} /></main></div>
-    <button className="sidebar-overlay" type="button" aria-label="관리자 메뉴 닫기" hidden={!sidebarOpen} onClick={() => setSidebarOpen(false)} /></div>;
+  return (
+    <div className="admin-shell">
+      <aside className={sidebarOpen ? 'admin-sidebar open' : 'admin-sidebar'}>
+        <Link
+          className="admin-brand"
+          to="/admin/dashboard"
+        >
+          <span
+            className="brand-icon"
+            aria-hidden="true"
+          >
+            013
+          </span>
+          <span>
+            <strong>(주) 서경 마을버스</strong>
+            <small>민원 관리 시스템</small>
+          </span>
+        </Link>
+        <nav
+          className="admin-nav"
+          aria-label="관리자 메뉴"
+        >
+          <p>WORKSPACE</p>
+          <NavLink
+            className={navClass}
+            to="/admin/dashboard"
+          >
+            <span>▦</span> 대시보드
+          </NavLink>
+          <NavLink
+            className={navClass}
+            to="/admin/main-page"
+          >
+            <span>▧</span> 메인페이지 관리
+          </NavLink>
+          <NavLink
+            className={navClass}
+            to="/admin/complaints"
+          >
+            <span>▤</span> 민원 관리
+          </NavLink>
+          <NavLink
+            className={navClass}
+            to="/admin/notices"
+          >
+            <span>◫</span> 공지사항
+          </NavLink>
+          <NavLink
+            className={navClass}
+            to="/admin/routes"
+          >
+            <span>↝</span> 운행안내 추가
+          </NavLink>
+          <NavLink
+            className={navClass}
+            to="/admin/members"
+          >
+            <span>♙</span> 회원 관리
+          </NavLink>
+          {member?.master && (
+            <NavLink
+              className={navClass}
+              to="/admin/partners"
+            >
+              <span>♧</span> 협력업체
+            </NavLink>
+          )}
+        </nav>
+        <div className="sidebar-bottom">
+          <Link to="/">사용자 메인으로</Link>
+          <button
+            type="button"
+            onClick={() => logout()}
+          >
+            로그아웃
+          </button>
+        </div>
+      </aside>
+      <div className="admin-workspace">
+        <header className="admin-topbar">
+          <button
+            className="sidebar-toggle"
+            type="button"
+            aria-label="관리자 메뉴 열기"
+            aria-expanded={sidebarOpen}
+            onClick={() => setSidebarOpen((open) => !open)}
+          >
+            ☰
+          </button>
+          <div>
+            <h1>{title}</h1>
+            <p>{description}</p>
+          </div>
+          <div className="admin-profile">
+            <span className="profile-avatar">{member?.master ? 'M' : 'A'}</span>
+            <span>
+              <strong>{member?.memberName || '관리자'}</strong>
+              <small>{member?.roleLabel || 'Administrator'}</small>
+            </span>
+          </div>
+        </header>
+        <main className="admin-content">
+          <Outlet context={{ member }} />
+        </main>
+      </div>
+      <button
+        className="sidebar-overlay"
+        type="button"
+        aria-label="관리자 메뉴 닫기"
+        hidden={!sidebarOpen}
+        onClick={() => setSidebarOpen(false)}
+      />
+    </div>
+  );
 }

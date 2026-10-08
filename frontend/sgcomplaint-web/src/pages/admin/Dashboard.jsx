@@ -40,13 +40,26 @@ export default function Dashboard() {
     <>
       {error && <div className="flash-message error">{error}</div>}
 
-      <section className="stat-grid" aria-label="업무 현황">
+      <section
+        className="stat-grid"
+        aria-label="업무 현황"
+      >
         {Object.entries(STATUS).map(([code, item]) => (
-          <article key={code} className={status === code ? 'stat-card selected' : 'stat-card'}>
+          <article
+            key={code}
+            className={status === code ? 'stat-card selected' : 'stat-card'}
+          >
             <span className={`stat-icon ${item.tone}`}>{item.icon}</span>
             <div>
               <p>{code === 'ALL' ? '전체 민원' : item.label}</p>
-              <a className="stat-number" href="#" onClick={(event) => { event.preventDefault(); changeStatus(code); }}>
+              <a
+                className="stat-number"
+                href="#"
+                onClick={(event) => {
+                  event.preventDefault();
+                  changeStatus(code);
+                }}
+              >
                 {counts[code] ?? 0}
               </a>
               <small>{item.caption}</small>
@@ -58,25 +71,56 @@ export default function Dashboard() {
       <section className="dashboard-grid">
         <article className="admin-panel recent-panel">
           <div className="panel-heading">
-            <div><h2><b>{STATUS[status]?.label || '전체'}</b> 민원</h2></div>
+            <div>
+              <h2>
+                <b>{STATUS[status]?.label || '전체'}</b> 민원
+              </h2>
+            </div>
             <Link to={`/admin/complaints?status=${status}`}>전체보기 →</Link>
           </div>
           <div className="admin-table-wrap">
             <table className="admin-table">
-              <thead><tr><th>민원번호</th><th>신청인</th><th>제목</th><th>상태</th><th>등록일</th></tr></thead>
+              <thead>
+                <tr>
+                  <th>민원번호</th>
+                  <th>신청인</th>
+                  <th>제목</th>
+                  <th>상태</th>
+                  <th>등록일</th>
+                </tr>
+              </thead>
               <tbody>
                 {complaints.map((item) => (
                   <tr key={item.complaintNo}>
                     <td>{item.complaintNo}</td>
                     <td>{item.memberName}</td>
                     <td className="title-cell">
-                      <button className="complaint-title-button" type="button" onClick={() => setSelected(item)}>{item.title}</button>
+                      <button
+                        className="complaint-title-button"
+                        type="button"
+                        onClick={() => setSelected(item)}
+                      >
+                        {item.title}
+                      </button>
                     </td>
-                    <td><span className={`admin-status ${item.statusCssClass}`}>{item.statusLabel}</span></td>
+                    <td>
+                      <span className={`admin-status ${item.statusCssClass}`}>
+                        {item.statusLabel}
+                      </span>
+                    </td>
                     <td>{item.registeredDateTime}</td>
                   </tr>
                 ))}
-                {!complaints.length && <tr><td className="table-empty" colSpan="5">접수된 민원이 없습니다.</td></tr>}
+                {!complaints.length && (
+                  <tr>
+                    <td
+                      className="table-empty"
+                      colSpan="5"
+                    >
+                      접수된 민원이 없습니다.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -87,14 +131,32 @@ export default function Dashboard() {
         </article>
 
         <aside className="admin-panel quick-panel">
-          <div className="panel-heading"><div><h2>빠른 업무</h2></div></div>
-          <Link to="/admin/complaints?status=CHECKING"><span>확인 대기 민원</span><strong>{data?.checkingCount ?? 0}</strong></Link>
-          <Link to="/admin/notices/new"><span>공지사항 등록</span><b>바로가기</b></Link>
-          <Link to="/admin/members"><span>이용 회원</span><strong>{data?.activeMemberCount ?? 0}</strong></Link>
+          <div className="panel-heading">
+            <div>
+              <h2>빠른 업무</h2>
+            </div>
+          </div>
+          <Link to="/admin/complaints?status=CHECKING">
+            <span>확인 대기 민원</span>
+            <strong>{data?.checkingCount ?? 0}</strong>
+          </Link>
+          <Link to="/admin/notices/new">
+            <span>공지사항 등록</span>
+            <b>바로가기</b>
+          </Link>
+          <Link to="/admin/members">
+            <span>이용 회원</span>
+            <strong>{data?.activeMemberCount ?? 0}</strong>
+          </Link>
         </aside>
       </section>
 
-      {selected && <ComplaintDetailModal complaint={selected} onClose={() => setSelected(null)} />}
+      {selected && (
+        <ComplaintDetailModal
+          complaint={selected}
+          onClose={() => setSelected(null)}
+        />
+      )}
     </>
   );
 }

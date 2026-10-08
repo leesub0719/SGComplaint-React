@@ -27,25 +27,49 @@ export default function MyPage() {
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   return (
-    <main className="mypage-page"><div className="mypage-shell">
-      <aside className="mypage-sidebar">
-        <div className="mypage-member-summary"><span>MY PAGE</span><strong>{profile?.empName || '회원'}</strong><small>{profile?.empId || ''}</small></div><nav>
-        <Link className="active" to="/mypage">정보수정</Link>
-        <Link to="/mypage/inquiries">문의내역</Link></nav>
-      </aside>
+    <main className="mypage-page">
+      <div className="mypage-shell">
+        <aside className="mypage-sidebar">
+          <div className="mypage-member-summary">
+            <span>MY PAGE</span>
+            <strong>{profile?.empName || '회원'}</strong>
+            <small>{profile?.empId || ''}</small>
+          </div>
+          <nav>
+            <Link
+              className="active"
+              to="/mypage"
+            >
+              정보수정
+            </Link>
+            <Link to="/mypage/inquiries">문의내역</Link>
+          </nav>
+        </aside>
 
-      <div className="mypage-content">
-        {loading && <p className="message">회원정보를 불러오는 중입니다.</p>}
-        {!loading && error && <p className="message error">{error}</p>}
-        {!loading && !error && profile && (
-          profile.verified
-            ? <ProfileForm profile={profile} onExpired={load} />
-            : <PasswordConfirm empId={profile.empId} onVerified={load} />
-        )}
-      </div></div>
+        <div className="mypage-content">
+          {loading && <p className="message">회원정보를 불러오는 중입니다.</p>}
+          {!loading && error && <p className="message error">{error}</p>}
+          {!loading &&
+            !error &&
+            profile &&
+            (profile.verified ? (
+              <ProfileForm
+                profile={profile}
+                onExpired={load}
+              />
+            ) : (
+              <PasswordConfirm
+                empId={profile.empId}
+                onVerified={load}
+              />
+            ))}
+        </div>
+      </div>
     </main>
   );
 }

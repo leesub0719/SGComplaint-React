@@ -40,61 +40,84 @@ export default function SignupTerms({ onAgreed }) {
   }
 
   return (
-    <main className="agreement-page"><section className="agreement-card">
-      <div className="agreement-title-area">
-        <p>STEP 1</p>
-        <h1>약관 및 개인정보 동의</h1>
-        <span>회원가입을 계속하려면 필수 내용을 확인하고 동의해 주세요.</span>
-      </div>
-
-      <form onSubmit={submit}>
-        <label className="all-agreement">
-          <input
-            type="checkbox"
-            checked={allChecked}
-            // 일부만 체크된 상태를 시각적으로 표시 (기존 agreeAll.indeterminate 대응)
-            ref={(node) => { if (node) node.indeterminate = !allChecked && someChecked; }}
-            onChange={(event) => toggleAll(event.target.checked)}
-          />
-          <span>이용약관 및 개인정보 수집·이용에 모두 동의합니다.</span>
-        </label>
-
-        {REQUIRED_AGREEMENTS.map((item) => (
-          <section className="agreement-section" key={item.name}>
-            <label className="agreement-check">
-              <input
-                type="checkbox"
-                checked={checked[item.name]}
-                onChange={(event) => setChecked((previous) => ({
-                  ...previous,
-                  [item.name]: event.target.checked,
-                }))}
-              />
-              <span>{item.label} <em>(필수)</em></span>
-            </label>
-
-            {item.articles && (
-              <div className="agreement-content" tabIndex={0}>
-                {item.articles.map((article) => (
-                  <div key={article.heading}>
-                    <h2>{article.heading}</h2>
-                    <p>{article.body}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-        ))}
-
-        {error && <p className="agreement-error">{error}</p>}
-
-        <div className="agreement-actions">
-          <a className="cancel-button" href="/app/">취소</a>
-          <button className="continue-button" type="submit" disabled={!allChecked || submitting}>
-            {submitting ? '처리 중…' : '동의하고 계속'}
-          </button>
+    <main className="agreement-page">
+      <section className="agreement-card">
+        <div className="agreement-title-area">
+          <p>STEP 1</p>
+          <h1>약관 및 개인정보 동의</h1>
+          <span>회원가입을 계속하려면 필수 내용을 확인하고 동의해 주세요.</span>
         </div>
-      </form>
-    </section></main>
+
+        <form onSubmit={submit}>
+          <label className="all-agreement">
+            <input
+              type="checkbox"
+              checked={allChecked}
+              // 일부만 체크된 상태를 시각적으로 표시 (기존 agreeAll.indeterminate 대응)
+              ref={(node) => {
+                if (node) node.indeterminate = !allChecked && someChecked;
+              }}
+              onChange={(event) => toggleAll(event.target.checked)}
+            />
+            <span>이용약관 및 개인정보 수집·이용에 모두 동의합니다.</span>
+          </label>
+
+          {REQUIRED_AGREEMENTS.map((item) => (
+            <section
+              className="agreement-section"
+              key={item.name}
+            >
+              <label className="agreement-check">
+                <input
+                  type="checkbox"
+                  checked={checked[item.name]}
+                  onChange={(event) =>
+                    setChecked((previous) => ({
+                      ...previous,
+                      [item.name]: event.target.checked,
+                    }))
+                  }
+                />
+                <span>
+                  {item.label} <em>(필수)</em>
+                </span>
+              </label>
+
+              {item.articles && (
+                <div
+                  className="agreement-content"
+                  tabIndex={0}
+                >
+                  {item.articles.map((article) => (
+                    <div key={article.heading}>
+                      <h2>{article.heading}</h2>
+                      <p>{article.body}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          ))}
+
+          {error && <p className="agreement-error">{error}</p>}
+
+          <div className="agreement-actions">
+            <a
+              className="cancel-button"
+              href="/app/"
+            >
+              취소
+            </a>
+            <button
+              className="continue-button"
+              type="submit"
+              disabled={!allChecked || submitting}
+            >
+              {submitting ? '처리 중…' : '동의하고 계속'}
+            </button>
+          </div>
+        </form>
+      </section>
+    </main>
   );
 }

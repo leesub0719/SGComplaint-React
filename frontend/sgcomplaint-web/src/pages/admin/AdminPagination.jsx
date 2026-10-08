@@ -10,8 +10,17 @@ export default function AdminPagination({ page, onChange, radius = 4 }) {
   };
 
   return (
-    <nav className="admin-pagination" aria-label="페이지 이동">
-      <a className={page.first ? 'disabled' : ''} href="#" onClick={(event) => move(event, page.page - 1)}>이전</a>
+    <nav
+      className="admin-pagination"
+      aria-label="페이지 이동"
+    >
+      <a
+        className={page.first ? 'disabled' : ''}
+        href="#"
+        onClick={(event) => move(event, page.page - 1)}
+      >
+        이전
+      </a>
       {numbers.map((number) => (
         <a
           key={number}
@@ -23,7 +32,13 @@ export default function AdminPagination({ page, onChange, radius = 4 }) {
           {number + 1}
         </a>
       ))}
-      <a className={page.last ? 'disabled' : ''} href="#" onClick={(event) => move(event, page.page + 1)}>다음</a>
+      <a
+        className={page.last ? 'disabled' : ''}
+        href="#"
+        onClick={(event) => move(event, page.page + 1)}
+      >
+        다음
+      </a>
     </nav>
   );
 }
